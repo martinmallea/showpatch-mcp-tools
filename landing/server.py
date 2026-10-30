@@ -74,7 +74,7 @@ def config() -> dict:
         "github": data.get("github", DEFAULTS["github"]),
         "github_note": data.get("github_note", DEFAULTS["github_note"]),
         "app": data.get("app", DEFAULTS["app"]),
-        "html_source": ROOT / "web" / "static" / "index.html",
+        "html_source": ROOT / "web" / "static" / "panel.html",
         "signups": DEFAULT_SIGNS,
         "zip": resolved,
     }

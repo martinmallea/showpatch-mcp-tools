@@ -264,7 +264,7 @@ python bridge.py landing                # landing con registro
 - Plan: `orchestration/work_packages.json`
 - Evidencia: `orchestration/evidence/`
 - Lecciones: `agents/lessons.jsonl`
-- App: `web/static/index.html`
+- App: `web/static/panel.html`
 - Landing: `landing/index.html`
 """
 

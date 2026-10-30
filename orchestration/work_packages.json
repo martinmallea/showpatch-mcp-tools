@@ -685,7 +685,7 @@
         "core/dmx_monitor.py",
         "tests/test_dmx_monitor.py",
         "web/app.py",
-        "web/static/index.html"
+        "web/static/panel.html"
       ],
       "deliverable": "Visualizador de 512 canales por universo, con fps, fuente, pico y grabación de tramas, para comprobar si la consola emite y si llega la red.",
       "definition_of_done": [

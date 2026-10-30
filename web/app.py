@@ -202,7 +202,7 @@ def status_payload() -> dict:
 
 def make_handler(bind: dict):
     token = bind.get("token")
-    index_file = STATIC / "index.html"
+    index_file = STATIC / "panel.html"
 
     class Handler(BaseHTTPRequestHandler):
         server_version = "ShowPatch/1.3"
@@ -236,9 +236,15 @@ def make_handler(bind: dict):
             query = parse_qs(parts.query)
             if not self._authorized(query):
                 return self._error(401, "Token requerido")
-            if parts.path in ("/", "/index.html"):
+            if parts.path == "/index.html":
+                self.send_response(302)
+                self.send_header("Location", "/panel.html")
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+                return
+            if parts.path in ("/", "/panel.html"):
                 if not index_file.is_file():
-                    return self._error(500, "Falta web/static/index.html")
+                    return self._error(500, "Falta web/static/panel.html")
                 return self._send(200, index_file.read_bytes(), "text/html; charset=utf-8")
             if parts.path == "/api/fixtures":
                 return self._json(
