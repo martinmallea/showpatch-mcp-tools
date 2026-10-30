@@ -80,6 +80,21 @@ class TestCapture(Base):
         with self.assertRaises(ValueError):
             export_csv(path, 99, self.dir / "x.csv")
 
+    def test_list_captures(self):
+        path = self.capture()
+        from core.dmx_capture import list_captures
+
+        found = list_captures(self.dir)
+        self.assertEqual(len(found), 1)
+        self.assertEqual(found[0]["name"], path.name)
+        self.assertEqual(found[0]["frames"], 3)
+        self.assertEqual(found[0]["universes"], [1, 2])
+
+    def test_list_captures_missing_dir(self):
+        from core.dmx_capture import list_captures
+
+        self.assertEqual(list_captures(self.dir / "no-existe"), [])
+
     def test_missing_file_raises(self):
         with self.assertRaises(FileNotFoundError):
             read_meta(self.dir / "no.dmxcap")

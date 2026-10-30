@@ -250,6 +250,10 @@ def make_handler(bind: dict):
                 )
             if parts.path == "/api/dmx/live":
                 return self._json(dmx_live_payload(full=bool(query.get("full", [""])[0])))
+            if parts.path == "/api/dmx/captures":
+                from core.dmx_capture import list_captures
+
+                return self._json({"captures": list_captures(ROOT / "captures")})
             if parts.path == "/api/status":
                 return self._json(status_payload())
             return self._error(404, "Ruta no encontrada")

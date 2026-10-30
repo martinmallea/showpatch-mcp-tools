@@ -160,6 +160,29 @@ def summary(path: str | Path) -> dict:
     }
 
 
+def list_captures(directory: str | Path, *, limit: int = 20) -> list[dict]:
+    """Capturas recientes con un resumen corto, para listarlas en la app."""
+    base = Path(directory)
+    if not base.is_dir():
+        return []
+    found = []
+    for path in sorted(base.glob("*.dmxcap"), key=lambda p: p.stat().st_mtime, reverse=True)[:limit]:
+        try:
+            info = summary(path)
+        except (OSError, ValueError):
+            continue
+        found.append(
+            {
+                "name": path.name,
+                "frames": info["frames"],
+                "seconds": info["seconds"],
+                "universes": [u["universe"] for u in info["universes"]],
+                "kb": round(path.stat().st_size / 1024, 1),
+            }
+        )
+    return found
+
+
 def export_csv(path: str | Path, universe: int, out: str | Path) -> dict:
     """Una fila por frame, una columna por canal. Sólo canales que se movieron."""
     target = Path(out)

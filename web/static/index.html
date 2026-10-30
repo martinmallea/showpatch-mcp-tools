@@ -150,12 +150,15 @@
   <div class="card">
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
       <button id="recBtn" class="btn" style="padding:10px 14px">Empezar a grabar</button>
+      <button id="capBtn" class="btn" style="padding:10px 14px">Capturar a disco</button>
       <span class="hint" id="recState">sin grabar</span>
       <span class="hint" id="liveState" style="margin-left:auto">—</span>
     </div>
     <div class="hint">Escucha pasiva en UDP 6454 (Art-Net) y 5568 (sACN). No emite nada. Si no ves tráfico y la consola está emitiendo, permite <b>python.exe</b> en el firewall de Windows para redes privadas: Windows bloquea UDP entrante entre procesos.</div>
   </div>
   <div id="universes"></div>
+  <h2>CAPTURAS GUARDADAS</h2>
+  <div class="card" id="captures"><div class="hint">Cargando…</div></div>
 </section>
 
 <section id="color">
@@ -356,6 +359,29 @@ $('recBtn').addEventListener('click', async () => {
     loadLive();
   }catch(e){ toast('Error: ' + e.message); }
 });
+let capturing = false;
+async function loadCaptures(){
+  try{
+    const d = await api('/api/dmx/captures');
+    $('captures').innerHTML = d.captures.length
+      ? d.captures.map(c => `<div class="k"><span>${c.name}</span><span>${c.frames} tramas · ${c.seconds}s · U${c.universes.join(', ')} · ${c.kb} KB</span></div>`).join('')
+      : '<div class="hint">Sin capturas todavía. Lanza una y aparecerá aquí.</div>';
+  }catch(e){ $('captures').textContent = 'Error: ' + e.message; }
+}
+$('capBtn').addEventListener('click', async () => {
+  try{
+    const d = await api('/api/dmx/capture', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({action: capturing ? 'stop' : 'start', name: 'toma'})
+    });
+    capturing = d.capturing;
+    $('capBtn').textContent = capturing ? 'Parar captura' : 'Capturar a disco';
+    if(!capturing && d.summary) toast(`Guardadas ${d.summary.frames} tramas en ${d.summary.seconds}s → ${d.summary.path}`);
+    loadCaptures();
+  }catch(e){ toast('Error: ' + e.message); }
+});
+loadCaptures();
+
 loadLive();
 setInterval(loadLive, 1000);
 
