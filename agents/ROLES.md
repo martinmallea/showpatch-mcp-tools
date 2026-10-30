@@ -56,6 +56,16 @@ validar `/gma3/cmd` sin grandMA3 onPC instalado).
 7. **Nada de hardware imaginario.** Lo que no se ha probado en una consola se
    documenta como no probado.
 
+## Roles previstos
+
+Todavía sin agente. Se crean cuando haya trabajo real que repartirles, no antes.
+
+| Rol | Cuándo | Qué posee | Regla propia |
+|---|---|---|---|
+| Diseño | Al rediseñar app o landing con usuarios reales | `web/static/`, `landing/` | Mobile-first, contraste WCAG, nada que dependa sólo del color |
+| Marketing y redes | Cuando la landing esté publicada | `landing/`, `docs/` | Sólo hechos verificables; ni un testimonio inventado |
+| Ventas | Con demo estable y precio decidido | `docs/` | Licencia única, demo de 10 minutos, objeciones por delante |
+
 ## Experiencia acumulada (lecciones)
 
 Cada error no obvio se registra y **se inyecta en los briefs siguientes del mismo

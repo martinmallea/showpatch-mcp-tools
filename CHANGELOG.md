@@ -3,6 +3,20 @@
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/).
 Versionado semántico: un cambio de esquema obliga a bump de major.
 
+## [1.9.1] — 2026-10-30
+
+### Added
+
+- Roles previstos **Diseño**, **Marketing y redes** y **Ventas** en `agents/roster.json` y
+  `agents/ROLES.md`, con su alcance y el criterio para crearlos.
+- Referencia a **Archify** (https://github.com/tt-a1i/archify) en el orquestador: diagramas
+  de arquitectura y páginas explicativas a partir del repo.
+
+### Notas
+
+- Los agentes de la plataforma se renombraron a Orquestador, Contrato y QA, Parsers,
+  Geometría, Protocolo y Documentación, y se les cargaron las instrucciones nuevas.
+
 ## [1.9.0] — 2026-10-30
 
 ### Added
