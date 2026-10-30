@@ -1,0 +1,46 @@
+{
+  "work_package": "WP-02",
+  "generated_at": "2026-10-30T11:21:19+00:00",
+  "fingerprint": "aabe0d1f36dfecb3e80efa5f18c61cfe41c75cb03e731286f1263ab484ffb904",
+  "ok": true,
+  "gates": [
+    {
+      "gate": "G-PARSERS",
+      "type": "command",
+      "ok": true,
+      "argv": [
+        "C:\\Users\\DELL OPTIPLEX\\AppData\\Local\\Programs\\AutoClaw2\\resources\\vendor\\python\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_ma3_xml.py"
+      ],
+      "exit": 0,
+      "duration_ms": 208,
+      "stdout_tail": "",
+      "stderr_tail": "...........\n----------------------------------------------------------------------\nRan 11 tests in 0.072s\n\nOK\n"
+    },
+    {
+      "gate": "G-PARSERS-CSV",
+      "type": "command",
+      "ok": true,
+      "argv": [
+        "C:\\Users\\DELL OPTIPLEX\\AppData\\Local\\Programs\\AutoClaw2\\resources\\vendor\\python\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_chamsys_csv.py"
+      ],
+      "exit": 0,
+      "duration_ms": 126,
+      "stdout_tail": "",
+      "stderr_tail": "...........\n----------------------------------------------------------------------\nRan 11 tests in 0.005s\n\nOK\n"
+    }
+  ]
+}

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ShowPatch · MCP Tools</title>
+<style>
+  :root{
+    --bg:#0e1116; --card:#161c24; --card2:#1d242e; --line:#2a323d;
+    --txt:#e7ebf0; --dim:#8d98a6; --accent:#e0a03a; --ok:#3ecf8e; --bad:#ef5d5d;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;background:var(--bg);color:var(--txt);
+    font:15px/1.45 "Segoe UI",system-ui,-apple-system,sans-serif}
+  body{padding:0 14px 40px;max-width:960px;margin:0 auto}
+  header{display:flex;align-items:center;gap:10px;padding:14px 0 10px;position:sticky;top:0;
+    background:var(--bg);z-index:5}
+  .brand{font-weight:700;letter-spacing:.14em;font-size:13px}
+  .chip{font-size:11px;color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:5px 9px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);display:inline-block;margin-right:5px}
+  .dry{margin-left:auto;font-size:11px;color:var(--accent);border:1px solid var(--accent);
+    border-radius:999px;padding:5px 9px;white-space:nowrap}
+  nav{display:flex;gap:6px;overflow-x:auto;padding:4px 0 10px;position:sticky;top:56px;
+    background:var(--bg);z-index:4}
+  nav button{background:var(--card);color:var(--dim);border:1px solid var(--line);border-radius:10px;
+    padding:9px 12px;font-size:13px;white-space:nowrap;cursor:pointer}
+  nav button.on{color:var(--txt);border-color:var(--accent)}
+  section{display:none}
+  section.on{display:block}
+  h2{font-size:11px;letter-spacing:.12em;color:var(--dim);font-weight:600;margin:16px 0 8px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  @media(max-width:640px){.grid{grid-template-columns:repeat(2,1fr)}}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:14px;min-height:56px;
+    padding:12px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer}
+  .tile:active{transform:scale(.98)}
+  .tile b{font-size:14px}
+  .tile span{font-size:11px;color:var(--dim)}
+  .tile.on{border-color:var(--accent);background:var(--card2)}
+  .lev{display:grid;grid-template-columns:64px 1fr 44px;align-items:center;gap:12px;margin:10px 0}
+  .lev b{font-size:11px;color:var(--dim);letter-spacing:.08em}
+  .lev .val{font-size:13px;text-align:right;font-variant-numeric:tabular-nums}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent}
+  input[type=range]::-webkit-slider-runnable-track{height:10px;background:var(--card2);border-radius:6px;border:1px solid var(--line)}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:9px;
+    background:var(--accent);border:1px solid #b57c22;margin-top:-9px}
+  input[type=text],input[type=number]{width:100%;background:var(--card2);border:1px solid var(--line);
+    border-radius:10px;color:var(--txt);padding:11px 12px;font-size:14px}
+  label.f{display:block;font-size:11px;color:var(--dim);margin:0 0 5px;letter-spacing:.06em}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:640px){.two{grid-template-columns:1fr}}
+  .swatches{display:flex;gap:10px;flex-wrap:wrap}
+  .sw{width:46px;height:46px;border-radius:12px;border:1px solid var(--line);cursor:pointer}
+  .rows{display:flex;flex-direction:column;gap:6px}
+  .row{display:grid;grid-template-columns:1.4fr 1fr 1fr 60px;gap:8px;padding:9px 10px;
+    background:var(--card2);border:1px solid var(--line);border-radius:10px;font-size:13px;align-items:center}
+  .row.head{background:none;border:none;color:var(--dim);font-size:11px;letter-spacing:.08em;padding:2px 10px}
+  .row .num{text-align:right;font-variant-numeric:tabular-nums;color:var(--accent)}
+  .row b{font-weight:600}
+  .k{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px}
+  .k:last-child{border-bottom:none}
+  .k span:first-child{color:var(--dim)}
+  .k span:last-child{font-variant-numeric:tabular-nums}
+  .warn{color:var(--bad)}
+  .ok{color:var(--ok)}
+  .hint{font-size:11px;color:var(--dim);margin-top:8px}
+  svg{display:block;width:100%;max-height:260px}
+  .cells{display:grid;grid-template-columns:repeat(32,1fr);gap:2px;margin-top:10px}
+  .cell{aspect-ratio:1;background:#1a2230;border-radius:2px;min-height:9px}
+  #toast{position:fixed;left:50%;bottom:18px;transform:translate(-50%,20px);opacity:0;background:#0a0d11;
+    border:1px solid var(--line);border-radius:12px;padding:10px 14px;font:12px/1.35 Consolas,monospace;
+    max-width:92vw;transition:.18s;pointer-events:none;z-index:20}
+  #toast.show{opacity:1;transform:translate(-50%,0)}
+  .big{width:100%;height:70px;border-radius:12px;border:1px solid var(--line);margin-top:8px}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">SHOWPATCH</div>
+  <div class="chip" id="statusChip"><span class="dot"></span> cargando…</div>
+  <div class="dry">DRY-RUN</div>
+</header>
+
+<nav id="tabs">
+  <button class="on" data-tab="panel">Panel</button>
+  <button data-tab="fixtures">Fixtures</button>
+  <button data-tab="dmx">DMX</button>
+  <button data-tab="dmxlive">DMX live</button>
+  <button data-tab="color">Color</button>
+  <button data-tab="rig">Rig</button>
+</nav>
+
+<section id="panel" class="on">
+  <h2>ESCENAS</h2>
+  <div class="grid" id="scenes">
+    <div class="tile" data-cmd="Go+ Sequence 1"><b>Warm</b><span>Seq 1 · Cue 3</span></div>
+    <div class="tile" data-cmd="Go+ Sequence 1"><b>Cold</b><span>Seq 1 · Cue 4</span></div>
+    <div class="tile on" data-cmd="Go+ Sequence 2"><b>Front</b><span>Seq 2 · Cue 1</span></div>
+    <div class="tile" data-cmd="Go+ Sequence 2"><b>Back</b><span>Seq 2 · Cue 2</span></div>
+  </div>
+
+  <h2>NIVELES</h2>
+  <div class="card">
+    <label class="lev"><b>MASTER</b><input type="range" min="0" max="100" value="78" data-name="Master"><span class="val">78%</span></label>
+    <label class="lev"><b>FRONT</b><input type="range" min="0" max="100" value="60" data-name="Front"><span class="val">60%</span></label>
+    <label class="lev"><b>BACK</b><input type="range" min="0" max="100" value="35" data-name="Back"><span class="val">35%</span></label>
+  </div>
+
+  <h2>COLOR</h2>
+  <div class="card">
+    <div class="swatches" id="quickColors">
+      <div class="sw" style="background:#ff9a3c" data-color="CTO"></div>
+      <div class="sw" style="background:#8ec5ff" data-color="CTB"></div>
+      <div class="sw" style="background:#ff4d6d" data-color="RED"></div>
+      <div class="sw" style="background:#7dffa8" data-color="GREEN"></div>
+      <div class="sw" style="background:#b07dff" data-color="UV"></div>
+      <div class="sw" style="background:#ffffff" data-color="WHITE"></div>
+    </div>
+    <div class="hint">Cada toque muestra el comando que se enviaría. Nada sale del navegador.</div>
+  </div>
+</section>
+
+<section id="fixtures">
+  <h2>BUSCADOR DE FIXTURES</h2>
+  <div class="card">
+    <div class="two">
+      <div><label class="f">MODELO</label><input type="text" id="fq" placeholder="pointe, mega tripar…" autocomplete="off"></div>
+      <div><label class="f">FABRICANTE (opcional)</label><input type="text" id="fm" placeholder="robe" autocomplete="off"></div>
+    </div>
+    <div class="hint" id="fcount">—</div>
+  </div>
+  <div class="rows" id="fresults"></div>
+</section>
+
+<section id="dmx">
+  <h2>CALCULADORA DMX</h2>
+  <div class="card">
+    <div class="two">
+      <div><label class="f">DIRECCIÓN</label><input type="number" id="daddr" value="1" min="1" max="512"></div>
+      <div><label class="f">FOOTPRINT (CANALES)</label><input type="number" id="dfoot" value="31" min="1" max="512"></div>
+    </div>
+    <label class="f" style="margin-top:12px">OCUPADOS (ej. 1-32, 40-60)</label>
+    <input type="text" id="docc" placeholder="1-32, 40-60">
+  </div>
+  <div class="card" id="dout"><div class="hint">Calculando…</div></div>
+</section>
+
+<section id="dmxlive">
+  <h2>DMX EN VIVO</h2>
+  <div class="card">
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <button id="recBtn" class="btn" style="padding:10px 14px">Empezar a grabar</button>
+      <span class="hint" id="recState">sin grabar</span>
+      <span class="hint" id="liveState" style="margin-left:auto">—</span>
+    </div>
+    <div class="hint">Escucha pasiva en UDP 6454 (Art-Net) y 5568 (sACN). No emite nada. Si no ves tráfico y la consola está emitiendo, permite <b>python.exe</b> en el firewall de Windows para redes privadas: Windows bloquea UDP entrante entre procesos.</div>
+  </div>
+  <div id="universes"></div>
+</section>
+
+<section id="color">
+  <h2>CALCULADORA DE COLOR</h2>
+  <div class="card">
+    <div class="big" id="cprev" style="background:#e0a03a"></div>
+    <label class="lev" style="margin-top:12px"><b>R</b><input type="range" id="cr" min="0" max="255" value="224"><span class="val" id="crv">224</span></label>
+    <label class="lev"><b>G</b><input type="range" id="cg" min="0" max="255" value="160"><span class="val" id="cgv">160</span></label>
+    <label class="lev"><b>B</b><input type="range" id="cb" min="0" max="255" value="58"><span class="val" id="cbv">58</span></label>
+    <label class="f" style="margin-top:10px">HEX</label>
+    <input type="text" id="chex" value="#e0a03a">
+  </div>
+  <div class="card" id="cout"><div class="hint">Calculando…</div></div>
+  <h2>CÓMO SE VE CON DALTONISMO</h2>
+  <div class="card" id="cblind"></div>
+</section>
+
+<section id="rig">
+  <h2>PLANTILLA DEL RIG</h2>
+  <div class="card">
+    <svg viewBox="0 0 320 172" aria-label="Vista cenital del rig en herradura">
+      <path d="M50 145 A110 110 0 0 1 270 145" fill="none" stroke="#2a323d" stroke-width="2"/>
+      <circle cx="160" cy="145" r="4" fill="#3ecf8e"/>
+      <text x="172" y="149" fill="#5d6773" font-size="9">centro</text>
+      <g fill="#e0a03a">
+        <circle cx="50" cy="145" r="6"/><circle cx="71" cy="80" r="6"/><circle cx="126" cy="41" r="6"/>
+        <circle cx="194" cy="41" r="6"/><circle cx="249" cy="80" r="6"/><circle cx="270" cy="145" r="6"/>
+      </g>
+      <text x="160" y="167" fill="#5d6773" font-size="9" text-anchor="middle">HERRADURA · R 5 m</text>
+    </svg>
+    <div class="hint">Vista cenital de la herradura. Editable en la siguiente fase.</div>
+  </div>
+</section>
+
+<div id="toast"></div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const toast = (msg) => {
+  const el = $('toast'); el.textContent = msg; el.classList.add('show');
+  clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('show'), 2600);
+};
+
+async function api(path, options){
+  const res = await fetch(path, options);
+  const data = await res.json().catch(() => ({error:'respuesta no JSON'}));
+  if(!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+  return data;
+}
+
+// --- pestañas
+$('tabs').addEventListener('click', (event) => {
+  const button = event.target.closest('button'); if(!button) return;
+  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b === button));
+  document.querySelectorAll('section').forEach(s => s.classList.toggle('on', s.id === button.dataset.tab));
+});
+
+// --- estado
+(async () => {
+  try{
+    const s = await api('/api/status');
+    const wp = s.work_packages || {};
+    $('statusChip').innerHTML = `<span class="dot"></span> ${wp.done}/${wp.total} WP · ${s.fixtures.indexed} fixtures`;
+  }catch(e){ $('statusChip').textContent = 'sin conexión con el servidor'; }
+})();
+
+// --- panel
+document.querySelectorAll('#scenes .tile').forEach(tile => {
+  tile.addEventListener('click', () => {
+    document.querySelectorAll('#scenes .tile').forEach(t => t.classList.remove('on'));
+    tile.classList.add('on');
+    toast('/gma3/cmd  →  ' + tile.dataset.cmd.replace('+', ' '));
+  });
+});
+document.querySelectorAll('input[type=range][data-name]').forEach(input => {
+  input.addEventListener('input', () => input.parentElement.querySelector('.val').textContent = input.value + '%');
+  input.addEventListener('change', () => toast(`Set ${input.dataset.name} At ${input.value}`));
+});
+document.querySelectorAll('#quickColors .sw').forEach(sw => {
+  sw.addEventListener('click', () => toast('Colour ' + sw.dataset.color));
+});
+
+// --- fixtures
+let fixtureTimer;
+async function searchFixtures(){
+  const q = $('fq').value.trim(), m = $('fm').value.trim();
+  try{
+    const data = await api(`/api/fixtures?q=${encodeURIComponent(q)}&manufacturer=${encodeURIComponent(m)}&limit=40`);
+    $('fcount').textContent = `${data.count} resultados de ${data.indexed} fixtures · librería ${data.library_version || '—'}`;
+    const rows = data.results.map(r => `
+      <div class="row"><b>${r.manufacturer || ''}</b><span>${r.model || ''}</span>
+      <span>${r.mode || '—'}</span><span class="num">${r.channels || '?'} ch</span></div>`).join('');
+    $('fresults').innerHTML = `<div class="row head"><span>FABRICANTE</span><span>MODELO</span><span>MODO</span><span style="text-align:right">CANALES</span></div>` + (rows || '<div class="hint">Sin resultados.</div>');
+  }catch(e){ $('fcount').textContent = 'Error: ' + e.message; }
+}
+$('fq').addEventListener('input', () => { clearTimeout(fixtureTimer); fixtureTimer = setTimeout(searchFixtures, 220); });
+$('fm').addEventListener('input', () => { clearTimeout(fixtureTimer); fixtureTimer = setTimeout(searchFixtures, 220); });
+searchFixtures();
+
+// --- DMX
+let dmxTimer;
+function parseOccupied(text){
+  return text.split(',').map(part => part.trim()).filter(Boolean).map(part => {
+    const m = part.match(/^(\d+)\s*-\s*(\d+)$/);
+    if(m) return [Number(m[1]), Number(m[2])];
+    const single = Number(part);
+    return Number.isFinite(single) ? [single, single] : null;
+  }).filter(Boolean);
+}
+async function calcDmx(){
+  const body = {address: Number($('daddr').value), footprint: Number($('dfoot').value), occupied: parseOccupied($('docc').value)};
+  try{
+    const d = await api('/api/dmx', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+    const overlaps = d.overlaps.length
+      ? d.overlaps.map(o => `<div class="k warn"><span>SOLAPE</span><span>${o.a[0]}-${o.a[1]} con ${o.b[0]}-${o.b[1]} → ${o.overlap[0]}-${o.overlap[1]}</span></div>`).join('')
+      : '<div class="k ok"><span>Solapes</span><span>ninguno</span></div>';
+    $('dout').innerHTML = `
+      <div class="k"><span>Rango</span><span>${d.range[0]} – ${d.range[1]}</span></div>
+      <div class="k"><span>Universo</span><span>${d.universe}</span></div>
+      <div class="k"><span>DIP switches</span><span>${d.dip_switches.join(', ') || '—'}</span></div>
+      <div class="k"><span>Cabida en universo</span><span>${d.capacity} aparatos</span></div>
+      <div class="k"><span>Ocupación</span><span>${d.usage_percent}%</span></div>
+      <div class="k"><span>Siguiente libre</span><span>${d.next_free ?? 'sin hueco'}</span></div>
+      ${overlaps}`;
+  }catch(e){ $('dout').innerHTML = `<div class="k warn"><span>Error</span><span>${e.message}</span></div>`; }
+}
+['daddr','dfoot','docc'].forEach(id => $(id).addEventListener('input', () => { clearTimeout(dmxTimer); dmxTimer = setTimeout(calcDmx, 200); }));
+calcDmx();
+
+// --- color
+let colorTimer;
+function setColor(r, g, b, fromHex){
+  $('cr').value = r; $('cg').value = g; $('cb').value = b;
+  $('crv').textContent = r; $('cgv').textContent = g; $('cbv').textContent = b;
+  if(!fromHex) $('chex').value = '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('');
+  calcColor();
+}
+async function calcColor(){
+  try{
+    const d = await api('/api/color', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({rgb:[Number($('cr').value), Number($('cg').value), Number($('cb').value)]})});
+    $('cprev').style.background = d.hex;
+    $('cout').innerHTML = `
+      <div class="k"><span>HEX</span><span>${d.hex}</span></div>
+      <div class="k"><span>RGB</span><span>${d.rgb.join(' · ')}</span></div>
+      <div class="k"><span>Porcentaje</span><span>${d.percent.join('% · ')}%</span></div>
+      <div class="k"><span>CMY</span><span>${d.cmy.join('% · ')}%</span></div>
+      <div class="k"><span>HSV</span><span>${d.hsv[0]}° · ${d.hsv[1]}% · ${d.hsv[2]}%</span></div>
+      <div class="k"><span>RGBW</span><span>${d.rgbw.join(' · ')}</span></div>
+      <div class="k"><span>Nombre</span><span>${d.name}</span></div>
+      <div class="hint">${d.note}</div>`;
+    const names = {protanopia:'Protanopía', deuteranopia:'Deuteranopía', tritanopia:'Tritanopía'};
+    $('cblind').innerHTML = Object.entries(d.simulated).map(([mode, rgb]) => `
+      <div class="k"><span>${names[mode]}</span>
+      <span><i style="display:inline-block;width:26px;height:16px;border-radius:4px;background:rgb(${rgb.join(',')});vertical-align:-3px;margin-right:8px"></i>${d.simulated_names[mode]}</span></div>`).join('');
+  }catch(e){ $('cout').innerHTML = `<div class="k warn"><span>Error</span><span>${e.message}</span></div>`; }
+}
+['cr','cg','cb'].forEach(id => $(id).addEventListener('input', () => {
+  $('crv').textContent = $('cr').value; $('cgv').textContent = $('cg').value; $('cbv').textContent = $('cb').value;
+  clearTimeout(colorTimer); colorTimer = setTimeout(() => setColor(Number($('cr').value), Number($('cg').value), Number($('cb').value), false), 120);
+}));
+$('chex').addEventListener('change', () => {
+  const m = $('chex').value.trim().replace('#','');
+  if(/^[0-9a-f]{6}$/i.test(m)) setColor(parseInt(m.slice(0,2),16), parseInt(m.slice(2,4),16), parseInt(m.slice(4,6),16), true);
+  else toast('HEX inválido');
+});
+// --- DMX en vivo
+let recording = false;
+async function loadLive(){
+  try{
+    const d = await api('/api/dmx/live?full=1');
+    $('liveState').textContent = `${d.frames_total} tramas · ${d.errors.length} avisos`;
+    recording = d.recording.on;
+    $('recBtn').textContent = recording ? 'Parar y ver' : 'Empezar a grabar';
+    $('recState').textContent = recording
+      ? `grabando ${d.recording.frames} tramas (${d.recording.seconds}s)`
+      : 'sin grabar';
+    const cards = d.universes.map(u => {
+      const cells = (u.channels || []).map((v, i) =>
+        `<i class="cell" style="background:${v ? `rgba(224,160,58,${(0.15 + 0.85 * v / 255).toFixed(2)})` : '#1a2230'}" title="CH ${i + 1}: ${v}"></i>`).join('');
+      return `<div class="card">
+        <div class="k"><span>Universo ${u.universe} · ${u.protocol}</span><span>${u.fps} fps · ${u.active} canales · pico ${u.peak}</span></div>
+        <div class="cells">${cells}</div>
+        <div class="hint">fuente ${u.source || '—'} · último paquete hace ${u.age}s</div>
+      </div>`;
+    }).join('');
+    $('universes').innerHTML = cards || '<div class="card"><div class="hint">Sin tráfico. Si la consola debería emitir, comprueba que Art-Net o sACN esté activo y que estéis en la misma red.</div></div>';
+  }catch(e){ $('liveState').textContent = 'Error: ' + e.message; }
+}
+$('recBtn').addEventListener('click', async () => {
+  try{
+    if(recording){
+      const d = await api('/api/dmx/record', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({action:'stop'})});
+      toast(`Grabadas ${d.stopped.frames} tramas en ${d.stopped.seconds}s · universos ${d.stopped.universes.join(', ') || '—'}`);
+    } else {
+      await api('/api/dmx/record', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({action:'start'})});
+      toast('Grabando tramas recibidas');
+    }
+    loadLive();
+  }catch(e){ toast('Error: ' + e.message); }
+});
+loadLive();
+setInterval(loadLive, 1000);
+
+calcColor();
+</script>
+</body>
+</html>

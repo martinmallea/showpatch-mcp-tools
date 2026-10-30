@@ -1,0 +1,23 @@
+{
+  "work_package": "WP-08",
+  "generated_at": "2026-10-30T10:23:16+00:00",
+  "fingerprint": "6a0d8158a7b5cc0a5da27cc8ba3d8ca0d56416b353e6bd4c41933a107d9e3246",
+  "ok": true,
+  "gates": [
+    {
+      "gate": "G-ENV",
+      "type": "command",
+      "ok": true,
+      "argv": [
+        "C:\\Users\\DELL OPTIPLEX\\AppData\\Local\\Programs\\AutoClaw2\\resources\\vendor\\python\\python.exe",
+        "bridge.py",
+        "audit",
+        "--check"
+      ],
+      "exit": 0,
+      "duration_ms": 354,
+      "stdout_tail": "MA AI BRIDGE — auditoría de entorno\n============================================\npresentes 6 · ausentes 6 · parciales 1\nimprescindibles ausentes: gh\ndeseables ausentes: pandoc, lua, luac, docker, wsl, code\nescrito: docs/ENVIRONMENT.md + docs/ENVIRONMENT.json\n✅ todo hueco tiene remediación documentada\n",
+      "stderr_tail": ""
+    }
+  ]
+}

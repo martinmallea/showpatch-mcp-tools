@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Export reducido de grandMA3 usado por tests/test_ma3_xml.py.
+  Reproduce la irregularidad del XML real: namespace por defecto, nombres de
+  nodo y atributo que cambian según versión (Fixture / FixtureNode), alias
+  (nr, label, type, address, rz) y coordenadas tanto en atributos como en
+  nodos hijos anidados.
+
+  Casos cubiertos:
+    101  fixture completo, sin rotación, coordenadas en nodo hijo, canales.
+    102  alias de atributos, rot_z != 0 con mount_type explícito (extractor).
+    103  tipo sin canal declarado (channel_count no resoluble -> 0).
+    105  rot_z != 0 sin mount_type -> default "truss"; coordenadas anidadas.
+    104  patch inválido -> descartado y contado en metadata.extensions.ma3.
+-->
+<MA3 xmlns="http://schemas.malighting.de/grandma3/2019/e122/dom"
+     session_name="Tour_2026_Act1"
+     data_version="2.0">
+  <Layer name="Truss_1" index="1">
+    <Fixture id="101" name="Beam_1" fixture_type="Robe Pointe 24ch Mode 1" patch="3.1">
+      <Coordinates x="-3.0" y="0.0" z="4.0"/>
+      <Channels>
+        <Channel nr="1" function="Dimmer"/>
+        <Channel nr="2" function="Pan"/>
+        <Channel nr="3" function="Tilt"/>
+      </Channels>
+    </Fixture>
+    <FixtureNode nr="102" label="Wash_1" type="Martin MAC Aura XB Extended"
+                 address="3.25" mount_type="truss">
+      <Coordinates x="2.5" y="-1.5" z="4.0"/>
+      <Rotation rot_z="90.0"/>
+    </FixtureNode>
+    <Fixture id="103" name="Ambient_PAR" type="Acme LED PAR" patch="5.1">
+      <Position x="0.0" y="3.0" z="0.0"/>
+    </Fixture>
+    <Fixture id="105" name="Spot_2" type="ClayPaky Sharpy Plus 31Ch v1.2" patch="4.1">
+      <Position>
+        <Coordinates x="1.5" y="-2.0" z="5.5"/>
+      </Position>
+      <Orientation rz="-45.0"/>
+    </Fixture>
+    <Fixture id="104" name="Stray_1" type="Generic Beam 7R" patch="sin_patch"/>
+  </Layer>
+</MA3>

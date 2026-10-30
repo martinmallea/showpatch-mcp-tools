@@ -1,0 +1,22 @@
+{
+  "work_package": "WP-09",
+  "generated_at": "2026-10-30T11:15:43+00:00",
+  "fingerprint": "b30f7813ffd05e4c01335dc5fdce577774fa751ad433148104821a58a839eb4c",
+  "ok": true,
+  "gates": [
+    {
+      "gate": "G-VERIFY",
+      "type": "command",
+      "ok": true,
+      "argv": [
+        "C:\\Users\\DELL OPTIPLEX\\AppData\\Local\\Programs\\AutoClaw2\\resources\\vendor\\python\\python.exe",
+        "bridge.py",
+        "verify"
+      ],
+      "exit": 0,
+      "duration_ms": 1087,
+      "stdout_tail": "MA AI BRIDGE — verificación integral\n============================================\n✅ contrato: 6/6 PASS\n✅ módulos: 133 tests OK\n✅ esquema: ejemplo válido\n✅ roundtrip: herradura 6/6 + 18 comandos OK\n============================================\nRESULTADO: TODO VERDE\n",
+      "stderr_tail": ""
+    }
+  ]
+}

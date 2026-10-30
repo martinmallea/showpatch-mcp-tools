@@ -1,0 +1,219 @@
+{
+  "generated_at": "2026-10-30T11:21:21+00:00",
+  "platform": {
+    "system": "Windows",
+    "release": "11",
+    "version": "10.0.22000",
+    "machine": "AMD64",
+    "python": "3.13.15",
+    "python_executable": "C:\\Users\\DELL OPTIPLEX\\AppData\\Local\\Programs\\AutoClaw2\\resources\\vendor\\python\\python.exe",
+    "python_safe_path": true,
+    "root": "C:\\Users\\DELL OPTIPLEX\\AppData\\Roaming\\AutoClaw-oversea-official\\accounts\\204e35fd3c059a107cc297e07e0e4ba87e670e803044225c35cd7f8a53480100\\projects\\Default\\showpatch"
+  },
+  "summary": {
+    "tools_probed": 13,
+    "present": 6,
+    "missing": 6,
+    "partial": 1,
+    "required_missing": [
+      "gh"
+    ],
+    "optional_missing": [
+      "pandoc",
+      "lua",
+      "luac",
+      "docker",
+      "wsl",
+      "code"
+    ],
+    "unactionable_gaps": [],
+    "console_target_installed": false
+  },
+  "tools": [
+    {
+      "key": "python",
+      "level": "required",
+      "purpose": "Ejecuta core, tests, orquestador y servidor MCP.",
+      "blocks": [],
+      "remediation": "ya instalado (intérprete embebido de la aplicación)",
+      "path": "C:\\Users\\DELL OPTIPLEX\\AppData\\Local\\Programs\\AutoClaw2\\resources\\vendor\\python\\python.exe",
+      "version": "Python 3.13.15",
+      "status": "present",
+      "note": ""
+    },
+    {
+      "key": "git",
+      "level": "required",
+      "purpose": "Versionado local, ramas, tags y trazabilidad de la evidencia.",
+      "blocks": [],
+      "remediation": "winget install --id Git.Git -e",
+      "path": "C:\\Program Files\\Git\\cmd\\git.EXE",
+      "version": "git version 2.55.0.windows.5",
+      "status": "present",
+      "note": ""
+    },
+    {
+      "key": "gh",
+      "level": "required",
+      "purpose": "Crear el repositorio, push, PRs y protección de rama.",
+      "blocks": [
+        "WP-10"
+      ],
+      "remediation": "winget install --id GitHub.cli -e",
+      "path": null,
+      "version": "",
+      "status": "missing",
+      "note": ""
+    },
+    {
+      "key": "pandoc",
+      "level": "optional",
+      "purpose": "Convertir PROJECT_OVERVIEW.md y docs a PDF.",
+      "blocks": [],
+      "remediation": "winget install --id JohnMacFarlane.Pandoc -e",
+      "path": null,
+      "version": "",
+      "status": "missing",
+      "note": ""
+    },
+    {
+      "key": "lua",
+      "level": "optional",
+      "purpose": "Validar sintaxis de ma3_plugins/mcp_state_bridge.lua antes de subirlo a la consola.",
+      "blocks": [],
+      "remediation": "winget install --id DEVCOM.Lua -e",
+      "path": null,
+      "version": "",
+      "status": "missing",
+      "note": ""
+    },
+    {
+      "key": "luac",
+      "level": "optional",
+      "purpose": "Compilar el plugin Lua en local (luac -p) como control de sintaxis.",
+      "blocks": [],
+      "remediation": "winget install --id DEVCOM.Lua -e",
+      "path": null,
+      "version": "",
+      "status": "missing",
+      "note": ""
+    },
+    {
+      "key": "node",
+      "level": "optional",
+      "purpose": "Clientes MCP en JS y utilidades de desarrollo.",
+      "blocks": [],
+      "remediation": "winget install --id OpenJS.NodeJS.LTS -e",
+      "path": "C:\\Users\\DELL OPTIPLEX\\AppData\\Local\\Programs\\AutoClaw2\\resources\\vendor\\node\\node.EXE",
+      "version": "v24.20.0",
+      "status": "present",
+      "note": ""
+    },
+    {
+      "key": "rg",
+      "level": "optional",
+      "purpose": "Búsqueda rápida en el repo (usada por la app, no por el código).",
+      "blocks": [],
+      "remediation": "winget install --id BurntSushi.ripgrep.MSVC -e",
+      "path": "C:\\Users\\DELL OPTIPLEX\\AppData\\Local\\Programs\\AutoClaw2\\resources\\vendor\\ripgrep\\rg.EXE",
+      "version": "ripgrep 15.0.0 (rev 3a612f88b8)",
+      "status": "present",
+      "note": ""
+    },
+    {
+      "key": "ssh",
+      "level": "optional",
+      "purpose": "Acceso remoto a consolas o a la máquina de show.",
+      "blocks": [],
+      "remediation": "winget install --id Microsoft.OpenSSH.Beta -e",
+      "path": "C:\\Windows\\System32\\OpenSSH\\ssh.EXE",
+      "version": "",
+      "status": "present",
+      "note": ""
+    },
+    {
+      "key": "curl",
+      "level": "optional",
+      "purpose": "Pruebas HTTP contra la API web de ChamSys.",
+      "blocks": [],
+      "remediation": "winget install --id cURL.cURL -e",
+      "path": "C:\\Windows\\system32\\curl.EXE",
+      "version": "curl 8.0.1 (Windows) libcurl/8.0.1 Schannel WinIDN",
+      "status": "present",
+      "note": ""
+    },
+    {
+      "key": "docker",
+      "level": "optional",
+      "purpose": "Reproducir el CI de GitHub (ubuntu-latest) en local.",
+      "blocks": [],
+      "remediation": "winget install --id Docker.DockerDesktop -e",
+      "path": null,
+      "version": "",
+      "status": "missing",
+      "note": ""
+    },
+    {
+      "key": "wsl",
+      "level": "optional",
+      "purpose": "Shell Linux para scripts .sh del repo (bootstrap_repo.sh).",
+      "blocks": [],
+      "remediation": "wsl --install -d Ubuntu",
+      "path": "C:\\Windows\\system32\\wsl.EXE",
+      "version": "\u0000",
+      "status": "partial",
+      "note": "sólo el lanzador instalado, sin distribución Linux"
+    },
+    {
+      "key": "code",
+      "level": "optional",
+      "purpose": "Edición y exportación Markdown → PDF desde VS Code.",
+      "blocks": [],
+      "remediation": "winget install --id Microsoft.VisualStudioCode -e",
+      "path": null,
+      "version": "",
+      "status": "missing",
+      "note": ""
+    }
+  ],
+  "show_software": [
+    {
+      "key": "grandMA3 onPC",
+      "purpose": "Validar /gma3/cmd, el plugin Lua y el estado OSC de MA3.",
+      "detected": false,
+      "version": "",
+      "executables": [],
+      "paths": [],
+      "note": "no encontrado"
+    },
+    {
+      "key": "grandMA2 onPC",
+      "purpose": "Consola soportada por el esquema (source.system=grandMA2), con OSC distinto.",
+      "detected": true,
+      "version": "3.9.60.63",
+      "executables": [
+        "C:\\Program Files\\MA Lighting Technologies\\grandma\\grandMA2 onPC 3.9.60.63\\gma2onpc.exe",
+        "C:\\Program Files\\MA Lighting Technologies\\grandma\\grandMA2 onPC 3.9.60.63\\gma2_update.exe"
+      ],
+      "paths": [
+        "C:\\Program Files\\MA Lighting Technologies\\grandma\\grandMA2 onPC 3.9.60.63"
+      ],
+      "note": ""
+    },
+    {
+      "key": "ChamSys MagicQ PC",
+      "purpose": "Validar el import CSV y los comandos ChamSys.",
+      "detected": true,
+      "version": "",
+      "executables": [
+        "C:\\Program Files\\ChamSys Ltd\\MagicQ PC\\mqhd.exe",
+        "C:\\Program Files\\ChamSys Ltd\\MagicQ PC\\mqqt.exe",
+        "C:\\Program Files\\ChamSys Ltd\\MagicQ PC\\mqvis.exe"
+      ],
+      "paths": [
+        "C:\\Program Files\\ChamSys Ltd\\MagicQ PC"
+      ],
+      "note": ""
+    }
+  ]
+}

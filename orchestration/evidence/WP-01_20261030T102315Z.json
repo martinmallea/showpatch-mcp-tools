@@ -1,0 +1,21 @@
+{
+  "work_package": "WP-01",
+  "generated_at": "2026-10-30T10:23:15+00:00",
+  "fingerprint": "f9b389235147fac3d1992fb196da533a5dd5098f56934557c5ab50541b04c674",
+  "ok": true,
+  "gates": [
+    {
+      "gate": "G-CONTRACT",
+      "type": "command",
+      "ok": true,
+      "argv": [
+        "C:\\Users\\DELL OPTIPLEX\\AppData\\Local\\Programs\\AutoClaw2\\resources\\vendor\\python\\python.exe",
+        "tools/contract_test.py"
+      ],
+      "exit": 0,
+      "duration_ms": 78,
+      "stdout_tail": "\n======================================================================\n CONTRACT TEST SUITE — MA AI BRIDGE\n======================================================================\n\n✅ Test 1 — Schema roundtrip\n  ✓ MA3 fixture 11: estructura correcta\n  ✓ ChamSys fixture 11: estructura correcta\n\n✅ Test 2 — Pan offsets en herradura\n  ✓ fixture 0: bearing=-0.0° pan=0.0°\n  ✓ fixture 0: pan_led=90.0°\n  ✓ fixture 1: bearing=-36.0° pan=-36.0°\n  ✓ fixture 1: pan_led=54.0°\n  ✓ fixture 2: bearing=-72.0° pan=-72.0°\n  ✓ fixture 2: pan_led=18.0°\n  ✓ fixture 3: bearing=-108.0° pan=-108.0°\n  ✓ fixture 3: pan_led=-18.0°\n  ✓ fixture 4: bearing=-144.0° pan=-144.0°\n  ✓ fixture 4: pan_led=-54.0°\n  ✓ fixture 5: bearing=-180.0° pan=-180.0°\n  ✓ fixture 5: pan_led=-90.0°\n\n✅ Test 3 — Framing OSC byte a byte\n  ✓ Payload alineado: 60 bytes\n  ✓ Address padding correcto\n  ✓ Hex canónico idéntico (60 bytes)\n\n✅ Test 4 — Traducción cross-platform\n  ✓ MA3: 3 comandos válidos\n  ✓ ChamSys: 1 comando válido\n\n✅ Test 5 — Calibración de offset\n  ✓ Sintaxis Set Fixture correcta\n  ✓ Store Offset presente\n  ✓ Corrección -15° calculada\n  ✓ observed_pan preservado\n\n✅ Test 6 — Splitter heurístico\n  ✓ 'Martin MAC Aura XB Extended' → 25ch vía mode_dict\n  ✓ 'Robe Pointe 24ch Mode 1' → 24ch vía regex\n  ✓ 'ClayPaky Sharpy Plus 31Ch v1.2' → 31ch vía regex\n  ✓ 'Generic LED Beam 12Ch v2' → 12ch vía regex\n  ✓ 'Robe Robin Pointe' → 31ch vía model_dict\n\n======================================================================\n RESULTADO: 6/6 tests PASS\n======================================================================\n",
+      "stderr_tail": ""
+    }
+  ]
+}

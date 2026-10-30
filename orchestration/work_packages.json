@@ -1,0 +1,717 @@
+{
+  "project": "showpatch",
+  "contract_version": "1.0.0",
+  "updated_at": "2026-10-30",
+  "work_packages": [
+    {
+      "id": "WP-01",
+      "title": "Contrato congelado en verde (6/6)",
+      "owner": "SUB-QA",
+      "depends_on": [],
+      "paths": [
+        "tools/contract_test.py",
+        "core/parsers.py",
+        "core/pan_offsets.py",
+        "core/schema_validator.py"
+      ],
+      "deliverable": "Suite de contrato ejecutable y reproducible, con vectores de oro auditados.",
+      "definition_of_done": [
+        "python tools/contract_test.py devuelve 6/6 PASS y exit code 0",
+        "El vector OSC del test 3 mide 12+4+44 = 60 bytes",
+        "El splitter preserva el casing del fabricante"
+      ],
+      "gates": [
+        {
+          "id": "G-CONTRACT",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "tools/contract_test.py"
+          ],
+          "cwd": "."
+        }
+      ],
+      "brief": "Objetivo: mantener el contrato unified_show-1.0.0 verde.\n\nRegla: el contrato es la ley. Si un test falla, primero audita si el fallo está en el código o en el vector de oro; nunca cambies el esquema para que pase un test.\n\nCriterio de aceptación: `python tools/contract_test.py` → 6/6 PASS.\nLímite: no toques spec/, core/parsers.py salvo bug demostrable, ni el esquema."
+    },
+    {
+      "id": "WP-02",
+      "title": "Parsers de consola: XML de grandMA3 y CSV de ChamSys",
+      "owner": "SUB-PARSER",
+      "depends_on": [
+        "WP-01"
+      ],
+      "paths": [
+        "core/ma3_xml.py",
+        "bridges/chamsys_bridge/csv_import.py",
+        "tests/test_ma3_xml.py",
+        "tests/test_chamsys_csv.py",
+        "tests/fixtures/ma3_export_sample.xml"
+      ],
+      "deliverable": "Ambos exports se convierten a unified_show-1.0.0 válido, tolerando XML irregular.",
+      "definition_of_done": [
+        "parse_ma3_xml() valida contra el esquema sin errores",
+        "Un fixture sin patch se descarta y se cuenta, no rompe el parse",
+        "parse_chamsys_csv() acepta cabeceras parciales"
+      ],
+      "gates": [
+        {
+          "id": "G-PARSERS",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_ma3_xml.py"
+          ],
+          "cwd": "."
+        },
+        {
+          "id": "G-PARSERS-CSV",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_chamsys_csv.py"
+          ],
+          "cwd": "."
+        }
+      ],
+      "brief": "Objetivo: que un show real entre al sistema sin manos.\n\nEntradas: export XML de grandMA3 (irregular entre versiones) y CSV de MagicQ.\nSalida: documento unified_show-1.0.0 que pase `validate_show` con post_parser=False.\n\nRegla: los parsers NO calculan Pan ni bearing (eso es WP-03) y no mutan `semantic`.\nCriterio: tests verdes + un fixture descartable contabilizado, no silenciado."
+    },
+    {
+      "id": "WP-03",
+      "title": "Motor geométrico: afín, herradura y Pan semántico",
+      "owner": "SUB-GEOMETRY",
+      "depends_on": [
+        "WP-01"
+      ],
+      "paths": [
+        "core/intelligence.py",
+        "tests/test_intelligence.py"
+      ],
+      "deliverable": "Transformaciones deterministas e idempotentes sobre el contrato.",
+      "definition_of_done": [
+        "horseshoe() reparte en arco, conserva z y rotación física",
+        "calculated_pan = bearing + offset del modelo, normalizado a (-270, 270]",
+        "Ejecutar horseshoe dos veces da el mismo resultado"
+      ],
+      "gates": [
+        {
+          "id": "G-GEOMETRY",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_intelligence.py"
+          ],
+          "cwd": "."
+        }
+      ],
+      "brief": "Objetivo: adaptar un show a otro recinto sin rehacerlo a mano.\n\nRegla de oro: bearing_deg es geometría; calculated_pan es geometría + calibración del yugo. No son lo mismo y no se mezclan.\nLa rotación física (position.rotation) no se reescribe al recolocar: es orientación de montaje.\n\nCriterio: idempotencia + validate_show sin errores + offset auditable en semantic.pan_offset_deg."
+    },
+    {
+      "id": "WP-04",
+      "title": "Finder: fingerprinting de robótica sin manual",
+      "owner": "SUB-PARSER",
+      "depends_on": [
+        "WP-01"
+      ],
+      "paths": [
+        "core/finder.py",
+        "tests/test_finder.py"
+      ],
+      "deliverable": "Roles de canal y modelo probable desde fotogramas DMX, con evidencia.",
+      "definition_of_done": [
+        "Detecta pan/tilt 16-bit, dimmer y strobe en un rig sintético",
+        "Con un solo fotograma degrada con warning, no con excepción",
+        "Cada candidato lleva score y razón"
+      ],
+      "gates": [
+        {
+          "id": "G-FINDER",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_finder.py"
+          ],
+          "cwd": "."
+        }
+      ],
+      "brief": "Objetivo: parchear robótica china clonada sin manual.\n\nEntrada: 1..N fotogramas de 512 canales.\nSalida: roles (canal DMX 1-based) + top-3 de modelos con score y razón.\n\nRegla: es una hipótesis, no una verdad. Todo rol lleva evidencia y todo análisis incompleto lleva warning."
+    },
+    {
+      "id": "WP-05",
+      "title": "Emisores nativos MA3 y ChamSys",
+      "owner": "SUB-PROTOCOL",
+      "depends_on": [
+        "WP-02"
+      ],
+      "paths": [
+        "core/commands.py",
+        "bridges/ma_bridge/emitter.py",
+        "bridges/chamsys_bridge/",
+        "tests/test_commands.py"
+      ],
+      "deliverable": "Una única fuente de sintaxis nativa, con allowlist de verbos y escapado.",
+      "definition_of_done": [
+        "Los 3 comandos MA3 y el comando ChamSys del contrato salen idénticos",
+        "Un label con comilla doble no rompe el comando",
+        "El plugin Lua escapa \\\\ y \""
+      ],
+      "gates": [
+        {
+          "id": "G-COMMANDS",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_commands.py"
+          ],
+          "cwd": "."
+        }
+      ],
+      "brief": "Objetivo: traducir intención a comandos que la consola acepta de verdad.\n\nProhibido inventar sintaxis: `Create Fixture` no existe en MA3. La referencia es el test 4 del contrato.\nAllowlist de verbos obligatoria; nada de DMX crudo.\n\nCriterio: string exacto esperado + caso de escapado + Lua válido."
+    },
+    {
+      "id": "WP-06",
+      "title": "Servidor MCP + codec OSC seguro",
+      "owner": "SUB-PROTOCOL",
+      "depends_on": [
+        "WP-03",
+        "WP-05"
+      ],
+      "paths": [
+        "mcp_server/",
+        "core/osc_codec.py",
+        "tests/test_mcp_server.py",
+        "tests/test_osc_codec.py"
+      ],
+      "deliverable": "JSON-RPC 2.0 por stdio con 11 herramientas, dry-run por defecto.",
+      "definition_of_done": [
+        "initialize / tools/list / tools/call responden conforme a MCP",
+        "osc.send rechaza /dmx y verbos fuera de allowlist",
+        "lua.generate escribe sólo en generated/ y nunca ejecuta"
+      ],
+      "gates": [
+        {
+          "id": "G-MCP",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_mcp_server.py"
+          ],
+          "cwd": "."
+        },
+        {
+          "id": "G-OSC",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_osc_codec.py"
+          ],
+          "cwd": "."
+        }
+      ],
+      "brief": "Objetivo: exponer el core a un LLM sin darle un cable pelado al hardware.\n\nReglas: stdout es sólo JSON-RPC, logs a stderr. Toda ruta se confina al repo. Todo envío es dry_run salvo petición explícita. Ningún comando fuera de la allowlist sale del proceso."
+    },
+    {
+      "id": "WP-07",
+      "title": "Orquestador y equipo de agentes",
+      "owner": "ORQ",
+      "depends_on": [
+        "WP-01"
+      ],
+      "paths": [
+        "orchestrator/",
+        "orchestration/",
+        "agents/",
+        "bridge.py",
+        "tests/test_orchestrator.py"
+      ],
+      "deliverable": "DAG con gates ejecutables, estado persistente y briefs por work package.",
+      "definition_of_done": [
+        "orchestrate plan valida el DAG sin ciclos ni owners desconocidos",
+        "orchestrate run ejecuta gates y escribe evidencia",
+        "Cada WP genera un brief autocontenido"
+      ],
+      "gates": [
+        {
+          "id": "G-ORCHESTRATOR",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "bridge.py",
+            "orchestrate",
+            "plan"
+          ],
+          "cwd": "."
+        },
+        {
+          "id": "G-ORCHESTRATOR-TESTS",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_orchestrator.py"
+          ],
+          "cwd": "."
+        }
+      ],
+      "brief": "Objetivo: que el trabajo se pueda repartir sin ambigüedad y verificar sin fe.\n\nCada work package declara dueño, dependencias, rutas que posee, criterio de done y gates ejecutables. El orquestador no 'cree' que algo está hecho: lo comprueba."
+    },
+    {
+      "id": "WP-08",
+      "title": "Auditoría del entorno de ejecución",
+      "owner": "SUB-QA",
+      "depends_on": [
+        "WP-01"
+      ],
+      "paths": [
+        "tools/env_audit.py",
+        "docs/ENVIRONMENT.md",
+        "docs/ENVIRONMENT.json"
+      ],
+      "deliverable": "Inventario de software instalado, huecos y su impacto en el roadmap.",
+      "definition_of_done": [
+        "Detecta versiones reales, no supuestas",
+        "Cada hueco tiene impacto y comando de remediación",
+        "Se regenera con un comando"
+      ],
+      "gates": [
+        {
+          "id": "G-ENV",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "bridge.py",
+            "audit",
+            "--check"
+          ],
+          "cwd": "."
+        }
+      ],
+      "brief": "Objetivo: saber qué se puede automatizar en ESTA máquina y qué no.\n\nRegla: no instalar nada sin permiso; documentar el hueco y el comando exacto para cerrarlo.\nDiferenciar 'imprescindible' de 'deseable'."
+    },
+    {
+      "id": "WP-09",
+      "title": "Verificación integral",
+      "owner": "SUB-QA",
+      "depends_on": [
+        "WP-02",
+        "WP-03",
+        "WP-04",
+        "WP-05",
+        "WP-06",
+        "WP-07",
+        "WP-08"
+      ],
+      "paths": [
+        "tools/verify_all.py"
+      ],
+      "deliverable": "Un solo comando que prueba contrato, módulos y esquema de ejemplo.",
+      "definition_of_done": [
+        "verify_all sale 0 con todo verde y != 0 con cualquier rojo",
+        "Reporta contadores, no sólo 'OK'"
+      ],
+      "gates": [
+        {
+          "id": "G-VERIFY",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "bridge.py",
+            "verify"
+          ],
+          "cwd": "."
+        }
+      ],
+      "brief": "Objetivo: una única puerta de verdad antes de publicar.\n\nDebe correr: contrato (6/6), unittest de todo tests/, y validación del ejemplo del esquema. Salida legible y exit code fiable."
+    },
+    {
+      "id": "WP-10",
+      "title": "Documentación de release y publicación",
+      "owner": "SUB-DOCS",
+      "depends_on": [
+        "WP-09"
+      ],
+      "paths": [
+        "docs/RELEASE.md",
+        "docs/ARCHITECTURE.md",
+        "CHANGELOG.md"
+      ],
+      "deliverable": "Notas de release, arquitectura y checklist de publicación (GitHub bloqueado sin gh).",
+      "definition_of_done": [
+        "Arquitectura con límites y flujo de datos",
+        "Checklist de publicación con requisitos reales (gh, remoto, CI)",
+        "CHANGELOG con los cambios auditados de esta iteración"
+      ],
+      "gates": [
+        {
+          "id": "G-DOCS",
+          "type": "file",
+          "path": "docs/RELEASE.md"
+        },
+        {
+          "id": "G-CHANGELOG",
+          "type": "file",
+          "path": "CHANGELOG.md"
+        }
+      ],
+      "brief": "Objetivo: que otro pueda retomar el proyecto sin preguntar.\n\nDocumenta lo que existe y lo que no; los huecos de entorno van explícitos. Nada de promesas de hardware no validado."
+    },
+    {
+      "id": "WP-11",
+      "title": "Índice de fixtures desde ChamSys Fixture Finder",
+      "owner": "SUB-PARSER",
+      "depends_on": [
+        "WP-02"
+      ],
+      "paths": [
+        "core/fixture_library.py",
+        "tools/sync_fixture_library.py",
+        "spec/fixture_library.json",
+        "tests/test_fixture_library.py",
+        "docs/FIXTURE_DATA.md"
+      ],
+      "deliverable": "Catálogo local de 14 221 fixtures (17 fabricantes) que resuelve el número de canales cuando el texto del patch no lo declara.",
+      "definition_of_done": [
+        "El parser usa el índice sólo como último recurso y marca channel_count_source=library",
+        "Un modelo con varios modos se resuelve como ambiguous con su lista de opciones",
+        "La sincronización es regenerable, paginada y respeta el rate limit"
+      ],
+      "gates": [
+        {
+          "id": "G-FIXTURE-INDEX",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_fixture_library.py"
+          ],
+          "cwd": "."
+        },
+        {
+          "id": "G-FIXTURE-CLI",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "bridge.py",
+            "fixtures",
+            "--search",
+            "pointe",
+            "--limit",
+            "1"
+          ],
+          "cwd": "."
+        }
+      ],
+      "brief": "Objetivo: que un patch sin canales declarados deje de ser un misterio.\n\nEntrada: texto de tipo de fixture ('ADJ Mega Tripar', 'Robe iPointe Mode2').\nSalida: fabricante, modelo, modo y número de canales, con el origen auditable.\n\nRegla: el índice es el ÚLTIMO recurso. Regex y diccionarios resuelven antes porque el contrato los congela. Si hay varios modos y ninguno se pidió, se devuelve el más frecuente marcado como ambiguo: es una hipótesis, no un dato.\n\nDatos de terceros: metadatos de referencia con atribución, sin binarios .hed y sin uso para entrenamiento (robots.txt: ai-train=no)."
+    },
+    {
+      "id": "WP-12",
+      "title": "Rebranding a ShowPatch",
+      "owner": "ORQ",
+      "depends_on": [],
+      "paths": [
+        "README.md",
+        "PROJECT_OVERVIEW.md",
+        "docs/",
+        "agents/",
+        "tools/check_branding.py"
+      ],
+      "deliverable": "El proyecto se llama ShowPatch · MCP Tools en código, documentación, plan y agentes, sin restos de nombres anteriores y sin tocar el contrato.",
+      "definition_of_done": [
+        "No queda el nombre anterior en ningún archivo versionado",
+        "El contrato sigue en 6/6 y toda la suite en verde",
+        "Los agentes de la plataforma usan el nombre nuevo"
+      ],
+      "gates": [
+        {
+          "id": "G-BRANDING",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "tools/check_branding.py"
+          ],
+          "cwd": "."
+        },
+        {
+          "id": "G-BRANDING-VERIFY",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "bridge.py",
+            "verify"
+          ],
+          "cwd": "."
+        }
+      ],
+      "brief": "Objetivo: que el nombre del proyecto describa lo que hace (tres consolas) y no una marca.\n\nRegla: el renombrado es cosmético. El contrato unified_show-1.0.0 y sus 6 tests no se tocan; el esquema no sabe cómo se llama el proyecto.\n\nCuidado con lo que NO se renombra: 'MA3', 'grandMA3' y 'MA Lighting' son productos, no el nombre del proyecto. Y la evidencia histórica de orchestration/evidence/ no se reescribe: es un registro, no documentación."
+    },
+    {
+      "id": "WP-13",
+      "title": "App local: panel, buscador de fixtures y calculadoras",
+      "owner": "SUB-PROTOCOL",
+      "depends_on": [
+        "WP-11"
+      ],
+      "paths": [
+        "web/",
+        "tests/test_web_app.py",
+        "tests/test_calculators.py",
+        "core/dmx_calc.py",
+        "core/color_calc.py",
+        "core/colorblind.py",
+        "bridge.py"
+      ],
+      "deliverable": "Servidor local con API y una página que reúne panel, buscador de fixtures, calculadora DMX, conversor de color y simulación de daltonismo.",
+      "definition_of_done": [
+        "El buscador consulta el índice real de 14 221 fixtures, no una lista de ejemplo",
+        "Las calculadoras devuelven valores exactos (% y DMX) y detectan solapes de patch",
+        "La app escucha sólo en loopback y exige token si se expone en red"
+      ],
+      "gates": [
+        {
+          "id": "G-WEB-TESTS",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_web_app.py"
+          ],
+          "cwd": "."
+        },
+        {
+          "id": "G-CALC-TESTS",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_calculators.py"
+          ],
+          "cwd": "."
+        }
+      ],
+      "brief": "Objetivo: que el técnico resuelva dudas en el móvil sin abrir la consola ni la terminal.\n\nTres piezas: buscador de fixtures (índice local), calculadora DMX (rango, DIP, solapes, siguiente libre) y calculadora de color (RGB, CMY, HSV, RGBW, % exactos) con simulación de daltonismo y nombre del color.\n\nReglas: cero dependencias externas, loopback por defecto, token obligatorio si se expone en red, y ninguna función que emita DMX crudo."
+    },
+    {
+      "id": "WP-14",
+      "title": "Grabador de comandos y autoplay",
+      "owner": "SUB-PROTOCOL",
+      "depends_on": [
+        "WP-06"
+      ],
+      "paths": [
+        "core/recorder.py",
+        "tests/test_recorder.py",
+        "bridge.py",
+        "mcp_server/tools.py"
+      ],
+      "deliverable": "Graba los comandos enviados (JSONL con tiempos) y los reproduce con velocidad y bucle. En seco por defecto.",
+      "definition_of_done": [
+        "La grabación sobrevive a líneas corruptas y a un corte a mitad",
+        "El calendario de reproducción se calcula sin dormir: velocidad y bucles son testeables",
+        "osc.send graba automáticamente si SHOWPATCH_RECORD apunta a un fichero"
+      ],
+      "gates": [
+        {
+          "id": "G-RECORDER",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_recorder.py"
+          ],
+          "cwd": "."
+        }
+      ],
+      "brief": "Objetivo: repetir una sesión de enfoque o un pase de cues sin reescribirla.\n\nQué graba: mensajes de consola (dirección OSC + args + instante). NO graba DMX: el puente no emite DMX a propósito.\n\nRegla: la reproducción es dry-run salvo --live explícito, y el calendario se calcula aparte del envío para poder probarlo sin esperar en tiempo real."
+    },
+    {
+      "id": "WP-15",
+      "title": "Landing de captación con registro",
+      "owner": "SUB-DOCS",
+      "depends_on": [
+        "WP-13"
+      ],
+      "paths": [
+        "landing/",
+        "tests/test_landing.py"
+      ],
+      "deliverable": "Página de venta con gancho, registro por correo y entrega de descargas sólo tras el alta, dejando claro que Android necesita PC.",
+      "definition_of_done": [
+        "El registro guarda correo, rol, consola y aceptación del aviso de PC; sin IP",
+        "Un correo repetido no duplica el registro",
+        "Sin binario publicado la descarga responde 404 con mensaje, no un enlace roto",
+        "El aviso de que el móvil es el mando y el motor va en el PC aparece antes del alta"
+      ],
+      "gates": [
+        {
+          "id": "G-LANDING",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_landing.py"
+          ],
+          "cwd": "."
+        },
+        {
+          "id": "G-LANDING-FILE",
+          "type": "file",
+          "path": "landing/index.html"
+        }
+      ],
+      "brief": "Objetivo: que alguien que no te conoce entienda qué es y pida acceso, sin mentirle.\n\nEl gancho va en el dolor (patch, escenario, clones), no en adjetivos. La sección 'Lo que NO hace' es parte de la venta: filtra curiosos y evita expectativas falsas.\n\nRegla de oro: el registro entrega descarga y HTML; el aviso de PC va ANTES del alta, no después. Nadie debe descubrir en el bolo que el móvil no hace el show solo."
+    },
+    {
+      "id": "WP-16",
+      "title": "Estructura en Notion y bundle importable",
+      "owner": "SUB-DOCS",
+      "depends_on": [
+        "WP-07"
+      ],
+      "paths": [
+        "tools/notion_sync.py",
+        "tests/test_notion_sync.py",
+        "exports/"
+      ],
+      "deliverable": "El proyecto se puede leer y actualizar en Notion sin duplicar la verdad: bundle Markdown/CSV para importar y sincronización por API cuando hay token.",
+      "definition_of_done": [
+        "El bundle importa en Notion sin token y trae roadmap, lecciones, releases y decisiones",
+        "El sync crea página y tres bases de datos, y reutiliza los ids en la segunda pasada",
+        "Sin token, --apply falla con un mensaje que dice exactamente qué falta"
+      ],
+      "gates": [
+        {
+          "id": "G-NOTION",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_notion_sync.py"
+          ],
+          "cwd": "."
+        },
+        {
+          "id": "G-NOTION-BUNDLE",
+          "type": "file",
+          "path": "exports/notion/roadmap.csv"
+        }
+      ],
+      "brief": "Objetivo: que el estado del proyecto se lea sin abrir una terminal.\n\nRegla de oro: el repo manda y Notion es un espejo. Sync de ida, nunca de vuelta: dos fuentes de verdad es cómo se pierde una semana.\n\nSin token, el bundle Markdown/CSV se importa a mano y cumple la misma función."
+    },
+    {
+      "id": "WP-17",
+      "title": "Monitor DMX en vivo (Art-Net y sACN)",
+      "owner": "SUB-PROTOCOL",
+      "depends_on": [
+        "WP-06",
+        "WP-13"
+      ],
+      "paths": [
+        "core/dmx_monitor.py",
+        "tests/test_dmx_monitor.py",
+        "web/app.py",
+        "web/static/index.html"
+      ],
+      "deliverable": "Visualizador de 512 canales por universo, con fps, fuente, pico y grabación de tramas, para comprobar si la consola emite y si llega la red.",
+      "definition_of_done": [
+        "Parsea ArtDmx y E1.31 reales y descarta paquetes ajenos",
+        "Muestra fps, canales activos, pico y antigüedad por universo",
+        "Graba tramas en memoria y las resume al parar",
+        "La app avisa del bloqueo de firewall en vez de parecer rota"
+      ],
+      "gates": [
+        {
+          "id": "G-DMX-MONITOR",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_dmx_monitor.py"
+          ],
+          "cwd": "."
+        }
+      ],
+      "brief": "Objetivo: saber en 5 segundos si la consola emite, si el switch reparte y qué canales se mueven, sin comprar hardware ni interponerse en la línea DMX.\n\nRegla: escucha pasiva. No emite, no cambia nada. Art-Net por UDP 6454 y sACN por 5568; el multicast de sACN requiere unirse al grupo y aquí sólo se hace si se pide.\n\nTrampa conocida: Windows bloquea UDP entrante entre procesos aunque sea loopback. Si el monitor ve cero, hay que permitir python.exe en el firewall antes de dudar del código."
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+name: Contract test suite
+
+on:
+  push:
+    branches: [main, integration]
+  pull_request:
+    branches: [main, integration]
+
+jobs:
+  contract:
+    name: "Contract test (py${{ matrix.python-version }})"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Verify no external deps
+        run: |
+          if grep -rE "^(import|from) (requests|numpy|osc|pytest)" core/ tools/ 2>/dev/null; then
+            echo "::error::Se detectaron imports externos"; exit 1
+          fi
+          echo "OK: sin dependencias externas"
+      - name: Run contract tests
+        run: python tools/contract_test.py --verbose
+      - name: Run contract tests (JSON)
+        if: always()
+        run: python tools/contract_test.py --json > contract_result.json || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: contract-result-py${{ matrix.python-version }}
+          path: contract_result.json
+          retention-days: 30
+      - name: Verify schema validator
+        run: |
+          python -c "
+          import json
+          from pathlib import Path
+          from core.schema_validator import validate_show
+          example = json.loads(Path('spec/unified_show-1.0.0.example.json').read_text())
+          errors = validate_show(example, post_parser=False)
+          if errors:
+              for e in errors: print(f'::error::{e}')
+              exit(1)
+          print('OK: schema validator pasa')
+          "
+
+  lint:
+    name: "Lint"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m py_compile core/*.py tools/*.py
+      - name: Check no tabs
+        run: |
+          if grep -rP "\t" core/ tools/ --include="*.py"; then
+            echo "::error::Tabulaciones encontradas"; exit 1
+          fi
+          echo "OK: solo espacios"

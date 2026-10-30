@@ -1,0 +1,30 @@
+{
+  "work_package": "WP-10",
+  "generated_at": "2026-10-30T11:15:43+00:00",
+  "fingerprint": "b30f7813ffd05e4c01335dc5fdce577774fa751ad433148104821a58a839eb4c",
+  "ok": true,
+  "gates": [
+    {
+      "gate": "G-DOCS",
+      "type": "file",
+      "ok": true,
+      "argv": [],
+      "exit": null,
+      "duration_ms": 0,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "path": "docs/RELEASE.md"
+    },
+    {
+      "gate": "G-CHANGELOG",
+      "type": "file",
+      "ok": true,
+      "argv": [],
+      "exit": null,
+      "duration_ms": 0,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "path": "CHANGELOG.md"
+    }
+  ]
+}

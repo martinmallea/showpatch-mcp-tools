@@ -1,0 +1,156 @@
+{
+  "version": 1,
+  "updated_at": "2026-10-30T12:41:07+00:00",
+  "work_packages": {
+    "WP-01": {
+      "status": "done",
+      "attempts": 2,
+      "evidence": [
+        "orchestration\\evidence\\WP-01_20261030T102315Z.json",
+        "orchestration\\evidence\\WP-01_20261030T112118Z.json"
+      ],
+      "updated_at": "2026-10-30T11:21:18+00:00"
+    },
+    "WP-02": {
+      "status": "done",
+      "attempts": 2,
+      "evidence": [
+        "orchestration\\evidence\\WP-02_20261030T102315Z.json",
+        "orchestration\\evidence\\WP-02_20261030T112119Z.json"
+      ],
+      "updated_at": "2026-10-30T11:21:19+00:00"
+    },
+    "WP-03": {
+      "status": "done",
+      "attempts": 2,
+      "evidence": [
+        "orchestration\\evidence\\WP-03_20261030T102315Z.json",
+        "orchestration\\evidence\\WP-03_20261030T112119Z.json"
+      ],
+      "updated_at": "2026-10-30T11:21:19+00:00"
+    },
+    "WP-04": {
+      "status": "done",
+      "attempts": 2,
+      "evidence": [
+        "orchestration\\evidence\\WP-04_20261030T102316Z.json",
+        "orchestration\\evidence\\WP-04_20261030T112119Z.json"
+      ],
+      "updated_at": "2026-10-30T11:21:19+00:00"
+    },
+    "WP-07": {
+      "status": "done",
+      "attempts": 2,
+      "evidence": [
+        "orchestration\\evidence\\WP-07_20261030T102316Z.json",
+        "orchestration\\evidence\\WP-07_20261030T112119Z.json"
+      ],
+      "updated_at": "2026-10-30T11:21:19+00:00"
+    },
+    "WP-08": {
+      "status": "done",
+      "attempts": 2,
+      "evidence": [
+        "orchestration\\evidence\\WP-08_20261030T102316Z.json",
+        "orchestration\\evidence\\WP-08_20261030T112121Z.json"
+      ],
+      "updated_at": "2026-10-30T11:21:21+00:00"
+    },
+    "WP-05": {
+      "status": "done",
+      "attempts": 2,
+      "evidence": [
+        "orchestration\\evidence\\WP-05_20261030T102316Z.json",
+        "orchestration\\evidence\\WP-05_20261030T112121Z.json"
+      ],
+      "updated_at": "2026-10-30T11:21:21+00:00"
+    },
+    "WP-06": {
+      "status": "done",
+      "attempts": 2,
+      "evidence": [
+        "orchestration\\evidence\\WP-06_20261030T102317Z.json",
+        "orchestration\\evidence\\WP-06_20261030T112122Z.json"
+      ],
+      "updated_at": "2026-10-30T11:21:22+00:00"
+    },
+    "WP-09": {
+      "status": "done",
+      "attempts": 3,
+      "evidence": [
+        "orchestration\\evidence\\WP-09_20261030T102317Z.json",
+        "orchestration\\evidence\\WP-09_20261030T111543Z.json",
+        "orchestration\\evidence\\WP-09_20261030T112123Z.json"
+      ],
+      "updated_at": "2026-10-30T11:21:23+00:00"
+    },
+    "WP-10": {
+      "status": "done",
+      "attempts": 3,
+      "evidence": [
+        "orchestration\\evidence\\WP-10_20261030T102317Z.json",
+        "orchestration\\evidence\\WP-10_20261030T111543Z.json",
+        "orchestration\\evidence\\WP-10_20261030T112123Z.json"
+      ],
+      "updated_at": "2026-10-30T11:21:23+00:00"
+    },
+    "WP-11": {
+      "status": "done",
+      "attempts": 2,
+      "evidence": [
+        "orchestration\\evidence\\WP-11_20261030T111519Z.json",
+        "orchestration\\evidence\\WP-11_20261030T112122Z.json"
+      ],
+      "updated_at": "2026-10-30T11:21:22+00:00"
+    },
+    "WP-12": {
+      "status": "done",
+      "attempts": 2,
+      "evidence": [
+        "orchestration\\evidence\\WP-12_20261030T114820Z.json",
+        "orchestration\\evidence\\WP-12_20261030T114855Z.json"
+      ],
+      "updated_at": "2026-10-30T11:48:55+00:00"
+    },
+    "WP-13": {
+      "status": "done",
+      "attempts": 0,
+      "evidence": [
+        "orchestration\\evidence\\WP-13_20261030T120000Z.json"
+      ],
+      "updated_at": "2026-10-30T12:00:00+00:00"
+    },
+    "WP-14": {
+      "status": "done",
+      "attempts": 0,
+      "evidence": [
+        "orchestration\\evidence\\WP-14_20261030T120124Z.json"
+      ],
+      "updated_at": "2026-10-30T12:01:24+00:00"
+    },
+    "WP-15": {
+      "status": "done",
+      "attempts": 0,
+      "evidence": [
+        "orchestration\\evidence\\WP-15_20261030T121334Z.json"
+      ],
+      "updated_at": "2026-10-30T12:13:34+00:00"
+    },
+    "WP-16": {
+      "status": "done",
+      "attempts": 0,
+      "evidence": [
+        "orchestration\\evidence\\WP-16_20261030T121732Z.json"
+      ],
+      "updated_at": "2026-10-30T12:17:32+00:00"
+    },
+    "WP-17": {
+      "status": "done",
+      "attempts": 0,
+      "evidence": [
+        "orchestration\\evidence\\WP-17_20261030T124107Z.json"
+      ],
+      "updated_at": "2026-10-30T12:41:07+00:00"
+    }
+  }
+}

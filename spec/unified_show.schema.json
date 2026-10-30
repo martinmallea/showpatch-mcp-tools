@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://showpatch.dev/schemas/unified_show-1.0.0.json",
+  "title": "UnifiedShow",
+  "version": "1.0.0",
+  "type": "object",
+  "required": ["schema_version", "source", "fixtures"],
+  "properties": {
+    "schema_version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "source": {
+      "type": "object",
+      "required": ["system", "extracted_at"],
+      "properties": {
+        "system": { "enum": ["grandMA3", "grandMA2", "ChamSys", "Vectorworks", "Generic"] },
+        "session_name": { "type": "string" },
+        "extracted_at": { "type": "string", "format": "date-time" },
+        "coordinate_system": { "enum": ["stage_center_origin", "stage_left_origin", "upstage_right_origin"], "default": "stage_center_origin" }
+      }
+    },
+    "stage": {
+      "type": "object",
+      "properties": {
+        "dimensions_m": { "type": "object", "properties": { "width": {"type":"number"}, "depth": {"type":"number"}, "height": {"type":"number"} } },
+        "center": { "type": "object", "properties": { "x": {"type":"number","default":0.0}, "y": {"type":"number","default":0.0} } }
+      }
+    },
+    "fixtures": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "patch", "position"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "type": {
+            "type": "object",
+            "required": ["manufacturer", "model"],
+            "properties": {
+              "manufacturer": { "type": "string" },
+              "model": { "type": "string" },
+              "mode": { "type": "string" },
+              "channel_count": { "type": "integer" }
+            }
+          },
+          "patch": {
+            "type": "object",
+            "required": ["universe", "address"],
+            "properties": {
+              "universe": { "type": "integer", "minimum": 1 },
+              "address": { "type": "integer", "minimum": 1, "maximum": 512 },
+              "dmx_footprint": { "type": "integer" }
+            }
+          },
+          "position": {
+            "type": "object",
+            "required": ["x", "y", "z"],
+            "properties": {
+              "x": { "type": "number" },
+              "y": { "type": "number" },
+              "z": { "type": "number" },
+              "unit": { "enum": ["meters", "feet"], "default": "meters" },
+              "mount_type": { "enum": ["floor", "truss", "wall", "moving"] },
+              "mount_type_source": { "enum": ["extractor", "default", "manual"], "default": "extractor" },
+              "rotation": {
+                "type": "object",
+                "properties": {
+                  "pan_deg": { "type": "number", "default": 0.0 },
+                  "tilt_deg": { "type": "number", "default": 0.0 },
+                  "roll_deg": { "type": "number", "default": 0.0 }
+                }
+              }
+            }
+          },
+          "optics": {
+            "type": "object",
+            "properties": {
+              "zoom_min_deg": { "type": "number" },
+              "zoom_max_deg": { "type": "number" },
+              "beam_angle_deg": { "type": "number" }
+            }
+          },
+          "capabilities": {
+            "type": "object",
+            "properties": {
+              "color_system": { "enum": ["CMY", "RGB", "RGBW", "RGBA", "HSV", "None"] },
+              "gobo_wheels": { "type": "integer" },
+              "prism": { "type": "boolean" },
+              "frost": { "type": "boolean" },
+              "focus": { "type": "boolean" },
+              "iris": { "type": "boolean" }
+            }
+          },
+          "semantic": {
+            "type": "object",
+            "properties": {
+              "role": { "enum": ["beam", "wash", "spot", "strobe", "fx", "ambient"] },
+              "zone": { "type": "string" },
+              "group_id": { "type": "string" },
+              "bearing_deg": { "type": ["number", "null"] },
+              "calculated_pan": { "type": ["number", "null"] },
+              "pan_offset_deg": { "type": "number", "default": 0.0 }
+            }
+          },
+          "channels": { "type": "array", "items": { "type": ["integer", "number", "string"] } }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "programmer_dna": { "type": "object" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "extensions": { "type": "object" }
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "version": "1.0.0",
+  "functions": [
+    "dimmer", "shutter", "strobe",
+    "red", "green", "blue", "white", "amber", "uv",
+    "cyan", "magenta", "yellow",
+    "pan", "pan_fine", "tilt", "tilt_fine",
+    "pan_tilt_speed", "move_speed",
+    "gobo_wheel_1", "gobo_wheel_1_rotate", "gobo_wheel_2",
+    "color_wheel", "color_wheel_rotate",
+    "prism", "prism_rotate", "frost", "focus", "zoom", "iris",
+    "effect_macro", "effect_speed",
+    "reset", "lamp_control", "control", "unknown"
+  ]
+}

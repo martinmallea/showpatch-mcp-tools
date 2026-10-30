@@ -1,0 +1,46 @@
+{
+  "work_package": "WP-06",
+  "generated_at": "2026-10-30T10:23:17+00:00",
+  "fingerprint": "6a0d8158a7b5cc0a5da27cc8ba3d8ca0d56416b353e6bd4c41933a107d9e3246",
+  "ok": true,
+  "gates": [
+    {
+      "gate": "G-MCP",
+      "type": "command",
+      "ok": true,
+      "argv": [
+        "C:\\Users\\DELL OPTIPLEX\\AppData\\Local\\Programs\\AutoClaw2\\resources\\vendor\\python\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_mcp_server.py"
+      ],
+      "exit": 0,
+      "duration_ms": 161,
+      "stdout_tail": "",
+      "stderr_tail": "...................\n----------------------------------------------------------------------\nRan 19 tests in 0.006s\n\nOK\n"
+    },
+    {
+      "gate": "G-OSC",
+      "type": "command",
+      "ok": true,
+      "argv": [
+        "C:\\Users\\DELL OPTIPLEX\\AppData\\Local\\Programs\\AutoClaw2\\resources\\vendor\\python\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_osc_codec.py"
+      ],
+      "exit": 0,
+      "duration_ms": 117,
+      "stdout_tail": "",
+      "stderr_tail": ".........\n----------------------------------------------------------------------\nRan 9 tests in 0.001s\n\nOK\n"
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "work_package": "WP-16",
+  "generated_at": "2026-10-30T12:17:32+00:00",
+  "fingerprint": "7f7775e0b06d821c98da2c6e76f7ed89b4ce3c407440102cf1525c7c2e13a38f",
+  "ok": true,
+  "gates": [
+    {
+      "gate": "G-NOTION",
+      "type": "command",
+      "ok": true,
+      "argv": [
+        "C:\\Users\\DELL OPTIPLEX\\AppData\\Local\\Programs\\AutoClaw2\\resources\\vendor\\python\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_notion_sync.py"
+      ],
+      "exit": 0,
+      "duration_ms": 217,
+      "stdout_tail": "Dry-run:\n  work packages: 16\n  lecciones: 6\n  releases: 8\n  decisiones: 5\n  payload completo: C:\\Users\\DELL OPTIPLEX\\AppData\\Roaming\\AutoClaw-oversea-official\\accounts\\204e35fd3c059a107cc297e07e0e4ba87e670e803044225c35cd7f8a53480100\\projects\\Default\\showbridge\\exports\\notion_payloads.json\n",
+      "stderr_tail": "...........\n----------------------------------------------------------------------\nRan 11 tests in 0.045s\n\nOK\n"
+    },
+    {
+      "gate": "G-NOTION-BUNDLE",
+      "type": "file",
+      "ok": true,
+      "argv": [],
+      "exit": null,
+      "duration_ms": 0,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "path": "exports/notion/roadmap.csv"
+    }
+  ]
+}

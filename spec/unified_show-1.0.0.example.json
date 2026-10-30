@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "source": {
+    "system": "grandMA3",
+    "session_name": "Tour_2026_Act1",
+    "extracted_at": "2026-10-30T14:22:11Z",
+    "coordinate_system": "stage_center_origin"
+  },
+  "stage": {
+    "dimensions_m": { "width": 20.0, "depth": 15.0, "height": 8.0 },
+    "center": { "x": 0.0, "y": 0.0 }
+  },
+  "fixtures": [
+    {
+      "id": "11",
+      "name": "Beam_1",
+      "type": { "manufacturer": "Robe", "model": "Pointe", "mode": "Extended", "channel_count": 31 },
+      "patch": { "universe": 3, "address": 1, "dmx_footprint": 31 },
+      "position": {
+        "x": -3.0, "y": 0.0, "z": 4.0, "unit": "meters",
+        "mount_type": "truss", "mount_type_source": "extractor",
+        "rotation": { "pan_deg": 0.0, "tilt_deg": 0.0, "roll_deg": 0.0 }
+      },
+      "optics": { "zoom_min_deg": 4.0, "zoom_max_deg": 45.0, "beam_angle_deg": 12.0 },
+      "capabilities": { "color_system": "CMY", "gobo_wheels": 2, "prism": true, "frost": true, "focus": true, "iris": true },
+      "semantic": { "role": "beam", "zone": "stage_left", "bearing_deg": null, "calculated_pan": null, "pan_offset_deg": 0.0 }
+    }
+  ],
+  "metadata": { "programmer_dna": { "density_cluster": "Compact-Rig" }, "tags": ["tour", "act1"] }
+}

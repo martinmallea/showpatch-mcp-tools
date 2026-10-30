@@ -1,0 +1,38 @@
+{
+  "work_package": "WP-15",
+  "generated_at": "2026-10-30T12:13:34+00:00",
+  "fingerprint": "bdf5b10d17d9758c5013e183867e89924914f769be2b90715861dcfbd5a148d3",
+  "ok": true,
+  "gates": [
+    {
+      "gate": "G-LANDING",
+      "type": "command",
+      "ok": true,
+      "argv": [
+        "C:\\Users\\DELL OPTIPLEX\\AppData\\Local\\Programs\\AutoClaw2\\resources\\vendor\\python\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_landing.py"
+      ],
+      "exit": 0,
+      "duration_ms": 814,
+      "stdout_tail": "",
+      "stderr_tail": "...........\n----------------------------------------------------------------------\nRan 11 tests in 0.608s\n\nOK\n"
+    },
+    {
+      "gate": "G-LANDING-FILE",
+      "type": "file",
+      "ok": true,
+      "argv": [],
+      "exit": null,
+      "duration_ms": 0,
+      "stdout_tail": "",
+      "stderr_tail": "",
+      "path": "landing/index.html"
+    }
+  ]
+}

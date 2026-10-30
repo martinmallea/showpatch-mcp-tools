@@ -1,0 +1,71 @@
+{
+  "project": "showpatch",
+  "contract_version": "1.0.0",
+  "orchestrator": {
+    "role": "ORQ",
+    "platform_agent": "ORQ · ShowPatch",
+    "agent_id": "c098cdee-9e35-42a6-99d0-ba8385a161ab",
+    "owns": ["orchestration/", "orchestrator/", "agents/", "bridge.py"],
+    "decides": [
+      "qué work package está listo según dependencias",
+      "quién lo ejecuta",
+      "si el resultado se acepta (sólo por gate + evidencia)"
+    ]
+  },
+  "subagents": [
+    {
+      "role": "SUB-QA",
+      "platform_agent": "SUB · Contrato y QA",
+      "agent_id": "ba03e569-6cb5-42c0-80f4-4ceebbe3fb78",
+      "work_packages": ["WP-01", "WP-08", "WP-09"],
+      "owns": ["tools/contract_test.py", "tools/verify_all.py", "tools/env_audit.py", "docs/ENVIRONMENT.md"],
+      "gate_command": "python bridge.py verify"
+    },
+    {
+      "role": "SUB-PARSER",
+      "platform_agent": "SUB · Parsers de consola",
+      "agent_id": "386f6a4b-0315-40d6-95d8-d8aff41aac50",
+      "work_packages": ["WP-02", "WP-04"],
+      "owns": ["core/ma3_xml.py", "core/finder.py", "bridges/chamsys_bridge/csv_import.py"],
+      "gate_command": "python bridge.py orchestrate gate WP-02"
+    },
+    {
+      "role": "SUB-GEOMETRY",
+      "platform_agent": "SUB · Geometría y Pan",
+      "agent_id": "06e5ed00-1f34-4380-931e-2e1412936922",
+      "work_packages": ["WP-03"],
+      "owns": ["core/intelligence.py"],
+      "gate_command": "python bridge.py orchestrate gate WP-03"
+    },
+    {
+      "role": "SUB-PROTOCOL",
+      "platform_agent": "SUB · Protocolo MCP-OSC",
+      "agent_id": "55185b99-19c2-4921-96e1-42cd7121e695",
+      "work_packages": ["WP-05", "WP-06"],
+      "owns": ["mcp_server/", "core/osc_codec.py", "core/commands.py", "bridges/ma_bridge/"],
+      "gate_command": "python bridge.py orchestrate gate WP-06"
+    },
+    {
+      "role": "SUB-DOCS",
+      "platform_agent": "SUB · Documentación y release",
+      "agent_id": "63afbae8-ddb5-4b2b-b6c0-8523ac585897",
+      "work_packages": ["WP-10"],
+      "owns": ["docs/ARCHITECTURE.md", "docs/RELEASE.md", "CHANGELOG.md"],
+      "gate_command": "python bridge.py orchestrate gate WP-10"
+    }
+  ],
+  "protocol": {
+    "input": "brief autocontenido generado por `python bridge.py orchestrate brief WP-xx`",
+    "output": "rutas escritas + salida literal de los tests",
+    "acceptance": "gates del work package en verde + evidencia en orchestration/evidence/",
+    "escalation": "si el gate no puede pasar por falta de hardware o software, el WP queda blocked y se reporta; no se simula éxito"
+  },
+  "hard_rules": [
+    "El contrato unified_show-1.0.0 está congelado: 6/6 es intocable.",
+    "Ningún subagente escribe fuera de las rutas de su work package.",
+    "Los validadores no mutan input; los parsers no calculan Pan.",
+    "Sin DMX crudo: todo pasa por el Command Line de la consola.",
+    "Todo envío de red es dry-run salvo petición explícita.",
+    "No se declara validación de hardware que no se haya hecho."
+  ]
+}

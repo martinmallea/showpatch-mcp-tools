@@ -1,0 +1,12 @@
+[
+  {"input": "Martin MAC Aura XB Extended",
+   "expected": {"manufacturer": "Martin", "model": "MAC Aura XB", "mode": "Extended", "channel_count": 25, "channel_count_source": "mode_dict"}},
+  {"input": "Robe Pointe 24ch Mode 1",
+   "expected": {"manufacturer": "Robe", "model": "Pointe", "channel_count": 24, "channel_count_source": "regex"}},
+  {"input": "ClayPaky Sharpy Plus 31Ch v1.2",
+   "expected": {"manufacturer": "ClayPaky", "model": "Sharpy Plus", "channel_count": 31, "channel_count_source": "regex"}},
+  {"input": "Generic LED Beam 12Ch v2",
+   "expected": {"manufacturer": "Generic", "channel_count": 12, "channel_count_source": "regex"}},
+  {"input": "Robe Robin Pointe",
+   "expected": {"manufacturer": "Robe", "channel_count": 31, "channel_count_source": "model_dict"}}
+]

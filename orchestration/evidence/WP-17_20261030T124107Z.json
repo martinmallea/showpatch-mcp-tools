@@ -1,0 +1,27 @@
+{
+  "work_package": "WP-17",
+  "generated_at": "2026-10-30T12:41:07+00:00",
+  "fingerprint": "d71f8b77e7b54677775cc3150bdbf295dc2548b07cf613e897fdd2058cf0695b",
+  "ok": true,
+  "gates": [
+    {
+      "gate": "G-DMX-MONITOR",
+      "type": "command",
+      "ok": true,
+      "argv": [
+        "C:\\Users\\DELL OPTIPLEX\\AppData\\Local\\Programs\\AutoClaw2\\resources\\vendor\\python\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_dmx_monitor.py"
+      ],
+      "exit": 0,
+      "duration_ms": 187,
+      "stdout_tail": "",
+      "stderr_tail": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.058s\n\nOK\n"
+    }
+  ]
+}

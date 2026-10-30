@@ -1,0 +1,45 @@
+{
+  "work_package": "WP-11",
+  "generated_at": "2026-10-30T11:21:22+00:00",
+  "fingerprint": "fd81d9b99318aad404ccfd60f150613136dcfdf8033da3eefea83e6fb5e89298",
+  "ok": true,
+  "gates": [
+    {
+      "gate": "G-FIXTURE-INDEX",
+      "type": "command",
+      "ok": true,
+      "argv": [
+        "C:\\Users\\DELL OPTIPLEX\\AppData\\Local\\Programs\\AutoClaw2\\resources\\vendor\\python\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_fixture_library.py"
+      ],
+      "exit": 0,
+      "duration_ms": 542,
+      "stdout_tail": "",
+      "stderr_tail": "..........\n----------------------------------------------------------------------\nRan 10 tests in 0.421s\n\nOK\n"
+    },
+    {
+      "gate": "G-FIXTURE-CLI",
+      "type": "command",
+      "ok": true,
+      "argv": [
+        "C:\\Users\\DELL OPTIPLEX\\AppData\\Local\\Programs\\AutoClaw2\\resources\\vendor\\python\\python.exe",
+        "bridge.py",
+        "fixtures",
+        "--search",
+        "pointe",
+        "--limit",
+        "1"
+      ],
+      "exit": 0,
+      "duration_ms": 126,
+      "stdout_tail": "Robe             GigaPointe                 Mode1        39 ch   id=58280\n",
+      "stderr_tail": ""
+    }
+  ]
+}
