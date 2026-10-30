@@ -61,6 +61,31 @@ def dmx_live_payload(full: bool = False) -> dict:
     return get_monitor().snapshot(full=full)
 
 
+_CAPTURE = None
+
+
+def dmx_capture_payload(action: str, name: str = "") -> dict:
+    """Captura a disco: pasivo, sin emitir nada. Un fichero por sesión."""
+    global _CAPTURE
+    from core.dmx_capture import new_capture
+
+    monitor = get_monitor()
+    if action == "start":
+        if _CAPTURE is not None:
+            raise ValueError("Ya hay una captura en curso")
+        _CAPTURE = new_capture(ROOT / "captures", name or "captura")
+        monitor.set_sink(_CAPTURE.write)
+        return {"capturing": True, "path": str(_CAPTURE.path.relative_to(ROOT))}
+    if action == "stop":
+        if _CAPTURE is None:
+            return {"capturing": False, "summary": None}
+        monitor.set_sink(None)
+        info = _CAPTURE.close()
+        _CAPTURE = None
+        return {"capturing": False, "summary": info}
+    raise ValueError("Acción inválida: usa start o stop")
+
+
 def dmx_record_payload(action: str) -> dict:
     monitor = get_monitor()
     if action == "start":
@@ -247,6 +272,8 @@ def make_handler(bind: dict):
                     return self._json(dmx_payload(data))
                 if parts.path == "/api/color":
                     return self._json(color_payload(data))
+                if parts.path == "/api/dmx/capture":
+                    return self._json(dmx_capture_payload(str(data.get("action", "")), str(data.get("name", ""))))
                 if parts.path == "/api/dmx/record":
                     return self._json(dmx_record_payload(str(data.get("action", ""))))
             except (ValueError, TypeError) as exc:

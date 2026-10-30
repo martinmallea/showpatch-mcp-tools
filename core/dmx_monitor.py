@@ -95,7 +95,12 @@ class DmxMonitor:
         self.errors: list[str] = []
         self._recording: list[Frame] | None = None
         self._record_started = 0.0
+        self._sink = None
         self._max_universes = max_universes
+
+    def set_sink(self, sink) -> None:
+        """Registra (o quita, con None) un consumidor de frames, p.ej. DmxCapture."""
+        self._sink = sink
 
     # --- entrada
 
@@ -112,6 +117,11 @@ class DmxMonitor:
             self._arrivals[frame.universe] = [t for t in arrivals if now - t <= 1.0]
             if self._recording is not None and len(self._recording) < 50_000:
                 self._recording.append(frame)
+        if self._sink is not None:
+            try:
+                self._sink(frame)
+            except OSError as exc:
+                self.errors.append(f"sink: {exc}")
         return frame
 
     # --- grabación

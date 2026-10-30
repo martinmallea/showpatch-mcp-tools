@@ -180,6 +180,26 @@ def cmd_landing(args: argparse.Namespace) -> int:
     return serve(args.host, args.port, not args.no_browser)
 
 
+def cmd_cap(args: argparse.Namespace) -> int:
+    from core import dmx_capture
+
+    if args.show:
+        import json as _json
+
+        print(_json.dumps(dmx_capture.summary(args.show), indent=2, ensure_ascii=False))
+        return 0
+    if args.csv:
+        if args.universe is None:
+            print("Falta --universe")
+            return 2
+        out = args.out or (args.csv + f".u{args.universe}.csv")
+        info = dmx_capture.export_csv(args.csv, args.universe, out)
+        print(f"{info['rows']} filas · {info['channels']} canales → {info['path']}")
+        return 0
+    print("Uso: bridge.py cap --show <fichero.dmxcap> | --csv <fichero> --universe N [--out salida.csv]")
+    return 2
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="bridge", description="ShowPatch — CLI única")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -247,6 +267,13 @@ def build_parser() -> argparse.ArgumentParser:
     landing.add_argument("--port", type=int, default=8790)
     landing.add_argument("--no-browser", action="store_true")
     landing.set_defaults(func=cmd_landing)
+
+    cap = subparsers.add_parser("cap", help="analizar una captura DMX guardada")
+    cap.add_argument("--show", default=None)
+    cap.add_argument("--csv", default=None)
+    cap.add_argument("--universe", type=int, default=None)
+    cap.add_argument("--out", default=None)
+    cap.set_defaults(func=cmd_cap)
 
     # 'orchestrate' se resuelve antes de argparse para pasar sus flags intactos.
     subparsers.add_parser("orchestrate", help="orquestador de work packages", add_help=False)

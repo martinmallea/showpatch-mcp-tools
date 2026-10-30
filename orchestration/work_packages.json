@@ -712,6 +712,44 @@
         }
       ],
       "brief": "Objetivo: saber en 5 segundos si la consola emite, si el switch reparte y qué canales se mueven, sin comprar hardware ni interponerse en la línea DMX.\n\nRegla: escucha pasiva. No emite, no cambia nada. Art-Net por UDP 6454 y sACN por 5568; el multicast de sACN requiere unirse al grupo y aquí sólo se hace si se pide.\n\nTrampa conocida: Windows bloquea UDP entrante entre procesos aunque sea loopback. Si el monitor ve cero, hay que permitir python.exe en el firewall antes de dudar del código."
+    },
+    {
+      "id": "WP-18",
+      "title": "Captura DMX a disco (.dmxcap)",
+      "owner": "SUB-PROTOCOL",
+      "depends_on": [
+        "WP-17"
+      ],
+      "paths": [
+        "core/dmx_capture.py",
+        "tests/test_dmx_capture.py",
+        "core/dmx_monitor.py"
+      ],
+      "deliverable": "Guarda las tramas recibidas en un fichero compacto, con resumen y export a CSV por universo. No reproduce: sólo captura.",
+      "definition_of_done": [
+        "Cada frame se guarda comprimido con su universo y su instante",
+        "summary() dice frames, fps, canales activos y pico por universo",
+        "export_csv() saca sólo los canales que se movieron",
+        "Una línea corrupta no invalida la captura entera"
+      ],
+      "gates": [
+        {
+          "id": "G-DMX-CAPTURE",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_dmx_capture.py"
+          ],
+          "cwd": "."
+        }
+      ],
+      "brief": "Objetivo: guardar lo que la consola emite para analizarlo después sin tener la mesa delante.\n\nDecisión consciente: se captura, no se reproduce. Emitir DMX es la única cosa que el sistema no hace por diseño; si algún día se añade, será un modo aparte con armado explícito y su propio WP.\n\nFormato: JSONL con cabecera y frames comprimidos (zlib+base64). Un rig real cambia poco entre frames, así que 20 KB/s en crudo bajan a ~1 KB/s."
     }
   ]
 }
