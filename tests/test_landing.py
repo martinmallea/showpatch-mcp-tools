@@ -109,7 +109,7 @@ class TestLanding(ServerCase):
         status, _, body = self.get("/api/config")
         self.assertEqual(status, 200)
         data = json.loads(body)
-        self.assertEqual(data["version"], "1.6.0")
+        self.assertEqual(data["version"], "1.9.1")
         self.assertFalse(data["has_binary"])
 
     def test_signup_returns_links(self):

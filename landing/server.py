@@ -41,14 +41,42 @@ def find_zip() -> Path | None:
     return candidates[0] if candidates else None
 
 
+CONFIG_FILE = LANDING / "config.json"
+DEFAULTS = {
+    "version": "1.9.1",
+    "github": "https://github.com/tuusuario/showpatch",
+    "github_note": "público en preparación",
+    "app": "http://127.0.0.1:8787/",
+    "zip": None,
+}
+
+
 def config() -> dict:
+    """Configuración de la landing: valores por defecto + landing/config.json.
+
+    Publicar no debe exigir tocar Python: la URL del repo y el ZIP se cambian en
+    el JSON. Si `zip` es null se autodetecta el ZIP más reciente junto al repo.
+    """
+    data = dict(DEFAULTS)
+    if CONFIG_FILE.is_file():
+        try:
+            loaded = json.loads(CONFIG_FILE.read_text(encoding="utf-8"))
+            if isinstance(loaded, dict):
+                data.update({key: value for key, value in loaded.items() if value is not None})
+        except json.JSONDecodeError:
+            pass
+
+    candidate = Path(str(data["zip"])) if data.get("zip") else find_zip()
+    resolved = candidate if candidate and Path(candidate).is_file() else None
+
     return {
-        "github": "https://github.com/tuusuario/showpatch",
-        "github_note": "público en preparación",
-        "app": "http://127.0.0.1:8787/",
+        "version": data.get("version", DEFAULTS["version"]),
+        "github": data.get("github", DEFAULTS["github"]),
+        "github_note": data.get("github_note", DEFAULTS["github_note"]),
+        "app": data.get("app", DEFAULTS["app"]),
         "html_source": ROOT / "web" / "static" / "index.html",
         "signups": DEFAULT_SIGNS,
-        "zip": find_zip(),
+        "zip": resolved,
     }
 
 
@@ -123,7 +151,7 @@ def make_handler(bind: dict):
             if path == "/api/config":
                 return self._json(
                     {
-                        "version": "1.6.0",
+                        "version": bind.get("version", DEFAULTS["version"]),
                         "github": bind.get("github"),
                         "github_note": bind.get("github_note"),
                         "has_binary": bool(bind.get("zip")),

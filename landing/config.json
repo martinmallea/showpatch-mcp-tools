@@ -1,0 +1,8 @@
+{
+  "version": "1.9.1",
+  "github": "https://github.com/tuusuario/showpatch",
+  "github_note": "público en preparación",
+  "app": "http://127.0.0.1:8787/",
+  "zip": null,
+  "zip_note": "deja null para autodetectar showpatch-*.zip junto al repo"
+}
