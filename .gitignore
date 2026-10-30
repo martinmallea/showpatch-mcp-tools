@@ -25,3 +25,4 @@ config.local.json
 recordings/
 landing/data/
 exports/
+.archify/
