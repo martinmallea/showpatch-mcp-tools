@@ -105,6 +105,18 @@ class TestLanding(ServerCase):
         self.assertEqual(status, 200)
         self.assertIn(b"SHOWPATCH", body)
 
+    def test_admin_page_and_api(self):
+        status, _, body = self.get("/admin")
+        self.assertEqual(status, 200)
+        self.assertIn(b"ADMIN", body)
+
+        status, _, body = self.get("/api/admin")
+        self.assertEqual(status, 200)
+        data = json.loads(body)
+        for key in ("signups", "project", "captures", "zip"):
+            self.assertIn(key, data)
+        self.assertGreaterEqual(data["project"]["total"], 18)
+
     def test_config(self):
         status, _, body = self.get("/api/config")
         self.assertEqual(status, 200)

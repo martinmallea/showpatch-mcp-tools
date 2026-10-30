@@ -108,6 +108,57 @@ def record_signup(data: dict, path: Path) -> tuple[bool, str]:
     return True, "ok"
 
 
+def read_signups(path: str | Path) -> list[dict]:
+    """Lee los registros; una línea corrupta no invalida el resto."""
+    target = Path(path)
+    if not target.is_file():
+        return []
+    rows = []
+    for line in target.read_text(encoding="utf-8").splitlines():
+        try:
+            rows.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue
+    return rows
+
+
+def admin_payload(bind: dict) -> dict:
+    """Todo junto: registros, estado del plan, capturas y enlaces."""
+    rows = read_signups(bind.get("signups"))
+    total = 0
+    done = 0
+    plan_path = ROOT / "orchestration" / "work_packages.json"
+    state_path = ROOT / "orchestration" / "state.json"
+    try:
+        total = len(json.loads(plan_path.read_text(encoding="utf-8")).get("work_packages", []))
+    except (OSError, json.JSONDecodeError):
+        pass
+    try:
+        state = json.loads(state_path.read_text(encoding="utf-8"))
+        done = sum(1 for item in state.get("work_packages", {}).values() if item.get("status") == "done")
+    except (OSError, json.JSONDecodeError):
+        pass
+
+    captures = []
+    try:
+        from core.dmx_capture import list_captures
+
+        captures = list_captures(ROOT / "captures")
+    except (ImportError, OSError):
+        pass
+
+    zip_path = bind.get("zip")
+    return {
+        "version": bind.get("version"),
+        "github": bind.get("github"),
+        "app": bind.get("app"),
+        "signups": {"count": len(rows), "rows": rows[-50:]},
+        "captures": captures,
+        "project": {"done": done, "total": total},
+        "zip": {"path": str(zip_path), "kb": round(Path(zip_path).stat().st_size / 1024)} if zip_path else None,
+    }
+
+
 def downloads(bind: dict) -> dict:
     zip_path = bind.get("zip")
     return {
@@ -120,6 +171,7 @@ def downloads(bind: dict) -> dict:
 
 def make_handler(bind: dict):
     index_file = LANDING / "index.html"
+    admin_file = LANDING / "admin.html"
 
     class Handler(BaseHTTPRequestHandler):
         server_version = "ShowPatchLanding/1.0"
@@ -143,6 +195,15 @@ def make_handler(bind: dict):
 
         def do_GET(self) -> None:  # noqa: N802
             path = urlsplit(self.path).path
+            if path in ("/admin", "/api/admin"):
+                if self.client_address[0] not in ("127.0.0.1", "::1"):
+                    return self._json({"error": "Sólo desde esta máquina"}, 403)
+                if path == "/api/admin":
+                    return self._json(admin_payload(bind))
+                if not admin_file.is_file():
+                    return self._json({"error": "Falta landing/admin.html"}, 500)
+                return self._send(200, admin_file.read_bytes(), "text/html; charset=utf-8")
+
             if path in ("/", "/index.html"):
                 if not index_file.is_file():
                     return self._json({"error": "Falta landing/index.html"}, 500)
