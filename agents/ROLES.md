@@ -10,11 +10,11 @@ el informe.
 | Rol | Agente en la plataforma | Work packages | Rutas que posee |
 |---|---|---|---|
 | **ORQ** | ORQ · ShowPatch | WP-07 + despacho | `orchestrator/`, `orchestration/`, `agents/`, `bridge.py` |
-| **SUB-QA** | SUB · Contrato y QA | WP-01, WP-08, WP-09 | `tools/contract_test.py`, `tools/verify_all.py`, `tools/env_audit.py`, `docs/ENVIRONMENT.md` |
-| **SUB-PARSER** | SUB · Parsers de consola | WP-02, WP-04 | `core/ma3_xml.py`, `core/finder.py`, `bridges/chamsys_bridge/csv_import.py` |
-| **SUB-GEOMETRY** | SUB · Geometría y Pan | WP-03 | `core/intelligence.py` |
-| **SUB-PROTOCOL** | SUB · Protocolo MCP-OSC | WP-05, WP-06 | `mcp_server/`, `core/osc_codec.py`, `core/commands.py`, `bridges/ma_bridge/` |
-| **SUB-DOCS** | SUB · Documentación y release | WP-10 | `docs/ARCHITECTURE.md`, `docs/RELEASE.md`, `CHANGELOG.md` |
+| **SUB-QA** | Contrato y QA | WP-01, WP-08, WP-09 | `tools/contract_test.py`, `tools/verify_all.py`, `tools/env_audit.py`, `docs/ENVIRONMENT.md` |
+| **SUB-PARSER** | Parsers | WP-02, WP-04 | `core/ma3_xml.py`, `core/finder.py`, `bridges/chamsys_bridge/csv_import.py` |
+| **SUB-GEOMETRY** | Geometría | WP-03 | `core/intelligence.py` |
+| **SUB-PROTOCOL** | Protocolo | WP-05, WP-06 | `mcp_server/`, `core/osc_codec.py`, `core/commands.py`, `bridges/ma_bridge/` |
+| **SUB-DOCS** | Documentación | WP-10 | `docs/ARCHITECTURE.md`, `docs/RELEASE.md`, `CHANGELOG.md` |
 
 El reparto es por **rutas exclusivas**: dos subagentes nunca escriben el mismo
 archivo. Eso elimina el conflicto de fusión, que es el fallo típico de un equipo
