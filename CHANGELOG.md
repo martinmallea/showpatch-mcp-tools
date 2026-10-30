@@ -27,6 +27,9 @@ Versionado semántico: un cambio de esquema obliga a bump de major.
 - **Grabación de tramas** en memoria desde la app: sirve para comprobar que llega tráfico y
   cuánto, antes de plantear reproducción.
 - Aviso explícito de firewall en la interfaz.
+- **Puente a Wolfmix por MIDI** (`core/midi.py` + `bridges/wolfmix_bridge/`): CC y notas
+  según el mapa que el operador configure en Wolf OS; sin mapa válido falla al cargar y
+  sin `live=True` no abre ningún dispositivo.
 - **Captura DMX a disco** (`core/dmx_capture.py`): guarda frames en `.dmxcap`
   (zlib + base64, ~1 KB/s), con resumen y export a CSV por universo. Sólo captura:
   reproducir DMX queda fuera por diseño hasta que se decida lo contrario.

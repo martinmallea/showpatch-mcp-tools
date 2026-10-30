@@ -750,6 +750,44 @@
         }
       ],
       "brief": "Objetivo: guardar lo que la consola emite para analizarlo después sin tener la mesa delante.\n\nDecisión consciente: se captura, no se reproduce. Emitir DMX es la única cosa que el sistema no hace por diseño; si algún día se añade, será un modo aparte con armado explícito y su propio WP.\n\nFormato: JSONL con cabecera y frames comprimidos (zlib+base64). Un rig real cambia poco entre frames, así que 20 KB/s en crudo bajan a ~1 KB/s."
+    },
+    {
+      "id": "WP-19",
+      "title": "Puente a Wolfmix por MIDI",
+      "owner": "SUB-PROTOCOL",
+      "depends_on": [
+        "WP-06"
+      ],
+      "paths": [
+        "core/midi.py",
+        "bridges/wolfmix_bridge/",
+        "tests/test_wolfmix.py"
+      ],
+      "deliverable": "Tercera consola bajo control: CC y notas salen del mapa MIDI que el operador configure en su Wolfmix, con dry-run por defecto.",
+      "definition_of_done": [
+        "Codifica CC, note on/off y program change con validación de rangos",
+        "El mapa se carga de JSON y falla al cargar, no en mitad del bolo",
+        "Una acción no mapeada dice qué acciones sí están mapeadas",
+        "Sin --live no se abre ningún dispositivo MIDI"
+      ],
+      "gates": [
+        {
+          "id": "G-WOLFMIX",
+          "type": "command",
+          "argv": [
+            "{python}",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "tests",
+            "-p",
+            "test_wolfmix.py"
+          ],
+          "cwd": "."
+        }
+      ],
+      "brief": "Objetivo: que Wolfmix deje de ser la consola que no podemos tocar.\n\nWolfmix no habla OSC ni HTTP: se controla por MIDI y el mapa lo define el operador en Wolf OS. Por eso el puente no trae números inventados: carga un JSON y, si falta una acción, falla diciendo cuáles hay.\n\nRegla: dry-run por defecto. Un CC mal dirigido cambia el look en vivo."
     }
   ]
 }
